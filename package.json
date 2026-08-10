@@ -1,0 +1,56 @@
+{
+  "name": "b-map-viewer",
+  "version": "0.1.0",
+  "description": "基于 Vue 3 与 Cesium 的地理信息可视化组件 SDK",
+  "type": "module",
+  "main": "./BMapViewer/b-map-viewer.umd.cjs",
+  "module": "./BMapViewer/b-map-viewer.js",
+  "exports": {
+    ".": {
+      "import": "./BMapViewer/b-map-viewer.js",
+      "require": "./BMapViewer/b-map-viewer.umd.cjs"
+    },
+    "./style.css": "./BMapViewer/style.css"
+  },
+  "files": [
+    "BMapViewer",
+    "README.md"
+  ],
+  "scripts": {
+    "generate:demo-tiles": "node scripts/generate-demo-tiles.mjs",
+    "dev": "vite",
+    "build": "npm run build:lib && npm run build:demo",
+    "build:lib": "vite build --config vite.lib.config.ts",
+    "build:demo": "vite build",
+    "preview": "vite preview",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "keywords": [
+    "vue3",
+    "cesium",
+    "gis",
+    "map",
+    "visualization"
+  ],
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "cesium": ">=1.118.0 <2",
+    "vue": ">=3.4.0 <4"
+  },
+  "dependencies": {
+    "@zip.js/zip.js": "2.7.73",
+    "@turf/turf": "^7.2.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "cesium": "1.118.2",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.14",
+    "vite-plugin-cesium": "^1.2.23",
+    "vitepress": "2.0.0-alpha.16",
+    "vue": "^3.5.13"
+  }
+}

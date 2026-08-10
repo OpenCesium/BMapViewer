@@ -1,0 +1,98 @@
+import { defineConfig } from 'vitepress'
+
+const base = process.env.VITEPRESS_BASE || '/BMapViewer/'
+
+export default defineConfig({
+  base,
+  title: 'BMapViewer',
+  description: '基于 Vue 3 与 Cesium 的地理信息可视化组件 SDK',
+  lang: 'zh-CN',
+  cleanUrls: true,
+  vite: {
+    server: {
+      port: 1234,
+      host: '0.0.0.0',
+      strictPort: true,
+    },
+  },
+  themeConfig: {
+    nav: [
+      { text: '快速开始', link: '/getting-started' },
+      { text: '组件 API', link: '/api' },
+      { text: '图层', link: '/layers' },
+      { text: '天气粒子', link: '/weather' },
+      { text: 'GitHub', link: 'https://github.com/banyan666/BMapViewer' },
+    ],
+    sidebar: [
+      {
+        text: 'SDK 接入',
+        items: [
+          { text: '项目介绍', link: '/introduction/index' },
+          { text: '快速开始', link: '/getting-started' },
+          { text: 'Hello World', link: '/introduction/hello' },
+          { text: '组件 API', link: '/api' },
+          { text: '图层总览', link: '/layers' },
+          { text: '开发与构建', link: '/development' },
+        ],
+      },
+      {
+        text: '核心能力',
+        items: [
+          { text: '数据规范 Data', link: '/data' },
+          { text: '综合应用', link: '/examples' },
+          { text: 'BMapViewer 组件', link: '/component/index' },
+          { text: 'useCesium', link: '/component/use-cesium' },
+        ],
+      },
+      {
+        text: '可视化图层 MapLayers',
+        collapsed: false,
+        items: [
+          { text: 'BaseMapLayer 底图', link: '/layers/base-map' },
+          { text: 'IconGroupLayer 图标', link: '/layers/icon-group' },
+          { text: 'LabelGroupLayer 文字', link: '/layers/label-group' },
+          { text: 'BubbleGroupLayer 气泡', link: '/layers/bubble-group' },
+          { text: 'BubbleLayer DOM 广告牌', link: '/layers/bubble-dom' },
+          { text: 'CircleGroupLayer 圆', link: '/layers/circle-group' },
+          { text: 'CircleExplosionLayer 圆爆炸', link: '/layers/circle-explosion' },
+          { text: 'CircleWaveLayer 水波纹', link: '/layers/circle-wave' },
+          { text: 'PointRippleLayer 点扩散', link: '/layers/point-ripple' },
+          { text: 'LineGroupLayer 线', link: '/layers/line-group' },
+          { text: 'LinePrimitiveLayer 高性能线', link: '/layers/line-primitive' },
+          { text: 'LineMaterialLayer 材质线', link: '/layers/line-material' },
+          { text: 'PolygonPrimitiveLayer 面', link: '/layers/polygon-primitive' },
+          { text: 'Build3DLayer 三维白膜', link: '/layers/build-3d' },
+          { text: 'HeatmapLayer 热力图', link: '/layers/heatmap' },
+          { text: 'RadarScanner3DLayer 三维雷达', link: '/layers/radar-scanner-3d' },
+        ],
+      },
+      {
+        text: '工具',
+        items: [
+          { text: 'PickTools 鼠标拾取', link: '/tools/pick-tool' },
+          { text: 'Turf 空间分析', link: '/tools/turf' },
+        ],
+      },
+      {
+        text: '扩展模块',
+        items: [
+          { text: '天气粒子系统', link: '/weather' },
+        ],
+      },
+    ],
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/banyan666/BMapViewer' },
+    ],
+    search: {
+      provider: 'local',
+    },
+    editLink: {
+      pattern: 'https://github.com/banyan666/BMapViewer/edit/main/docs/:path',
+      text: '在 GitHub 上编辑此页',
+    },
+    footer: {
+      message: '基于 Apache-2.0 许可发布',
+      copyright: 'BMapViewer',
+    },
+  },
+})
