@@ -154,7 +154,7 @@ SDK 内部已经显式导入 Cesium，不需要再执行 `window.Cesium = Cesium
 - Vue 3.4+
 - Cesium 1.118.x（当前验证版本为 1.118.2）
 - Vite 5+
-
+-
 ## License
 
 [Apache License 2.0](LICENSE)

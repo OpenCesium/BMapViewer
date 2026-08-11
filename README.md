@@ -155,6 +155,11 @@ SDK 内部已经显式导入 Cesium，不需要再执行 `window.Cesium = Cesium
 - Cesium 1.118.x（当前验证版本为 1.118.2）
 - Vite 5+
 
+## 打赏
+<img src="ds_wx.jpg" width="300" />
+<img src="ds_zfb.jpg" width="300" />
+
+
 ## License
 
 [Apache License 2.0](LICENSE)
