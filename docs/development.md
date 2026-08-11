@@ -45,9 +45,47 @@ Cesium 1.118 的 KML 模块仍使用 `@zip.js/zip.js/lib/zip-no-worker.js` 子�
 
 Pages 产物由案例站与文档站组合而成：
 
-- `<base_path>/`：Vue 3 + Cesium 在线示例。
-- `<base_path>/docs/`：VitePress 技术文档。
+- [在线预览](https://banyan666.github.io/BMapViewer/)：Vue 3 + Cesium 在线示例。
+- [在线文档](https://banyan666.github.io/BMapViewer/docs/)：VitePress 技术文档。
 
 工作流读取 GitHub Pages 返回的 `base_path` 动态生成部署子路径，因此同时兼容项目 Pages 和自定义域名。示例构建时通过 `VITE_DOCS_BASE_URL` 指向线上文档，文档构建时通过 `VITEPRESS_BASE` 设置 VitePress 的部署路径。
 
 首次使用前，需要在 GitHub 仓库的 `Settings → Pages → Build and deployment → Source` 中选择 `GitHub Actions`。之后每次推送到 `main` 都会自动更新案例和文档。
+
+## npm 发布
+
+发布包名为 [`b-map-viewer`](https://www.npmjs.com/package/b-map-viewer)，公开安装命令如下：
+
+```bash
+npm install b-map-viewer cesium vue
+```
+
+首次发布需要在本机完成 npm 身份验证与 2FA。登录时显式指定 npm 官方 Registry，避免本机配置的 npmmirror 等下载镜像拦截账号认证：
+
+```bash
+npm login --registry=https://registry.npmjs.org/ --auth-type=web
+npm whoami --registry=https://registry.npmjs.org/
+npm run build:lib
+npm run pack:check
+npm publish
+```
+
+`prepublishOnly` 会在正式发布前再次构建 SDK，发布内容由 `package.json` 的 `files` 字段限制为 SDK 产物、README、LICENSE 和包元数据。
+
+首次发布成功后，可在 npm 包设置中添加 GitHub Actions Trusted Publisher：
+
+| 配置项 | 值 |
+| --- | --- |
+| GitHub 用户 | `banyan666` |
+| Repository | `BMapViewer` |
+| Workflow | `publish-npm.yml` |
+| Allowed action | `npm publish` |
+
+`.github/workflows/publish-npm.yml` 监听 `v*` 标签并使用 OIDC 发布，不需要在仓库中保存长期 `NPM_TOKEN`。后续版本发布流程：
+
+```bash
+npm version patch
+git push --follow-tags
+```
+
+也可以根据语义化版本规则使用 `npm version minor` 或 `npm version major`。

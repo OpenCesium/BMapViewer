@@ -4,6 +4,11 @@ BMapViewer 是面向 Vue 3 应用的 Cesium 地理信息可视化 SDK。它统�
 
 仓库同时提供 SDK 源码、可编辑在线示例、VitePress 技术文档和多格式构建产物，适合用于三维 GIS、离线地图、园区态势、设备监控与专题分析等场景。
 
+## 在线资源
+
+- [在线预览](https://banyan666.github.io/BMapViewer/)：浏览图层、拾取绘制与天气模块，并在线编辑运行示例代码。
+- [在线文档](https://banyan666.github.io/BMapViewer/docs/)：查看快速开始、组件 API、图层说明和工具使用指南。
+
 ## 核心能力
 
 | 能力 | 说明 |
@@ -136,6 +141,8 @@ SDK 内部已经显式导入 Cesium，不需要再执行 `window.Cesium = Cesium
 
 ## 文档
 
+- [在线文档](https://banyan666.github.io/BMapViewer/docs/)
+- [在线预览](https://banyan666.github.io/BMapViewer/)
 - [完整技术文档站点](docs/index.md)
 - [快速开始](docs/getting-started.md)
 - [组件 API](docs/api.md)

@@ -1,7 +1,15 @@
 {
   "name": "b-map-viewer",
   "version": "0.1.0",
-  "description": "基于 Vue 3 与 Cesium 的地理信息可视化组件 SDK",
+  "description": "面向 Vue 3 应用的 Cesium 地理信息可视化 SDK",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/banyan666/BMapViewer.git"
+  },
+  "homepage": "https://banyan666.github.io/BMapViewer/docs/",
+  "bugs": {
+    "url": "https://github.com/banyan666/BMapViewer/issues"
+  },
   "type": "module",
   "main": "./BMapViewer/b-map-viewer.umd.cjs",
   "module": "./BMapViewer/b-map-viewer.js",
@@ -22,6 +30,8 @@
     "build": "npm run build:lib && npm run build:demo",
     "build:lib": "vite build --config vite.lib.config.ts",
     "build:demo": "vite build",
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm run build:lib",
     "preview": "vite preview",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
@@ -35,6 +45,10 @@
     "visualization"
   ],
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "peerDependencies": {
     "cesium": ">=1.118.0 <2",
     "vue": ">=3.4.0 <4"

@@ -5,7 +5,7 @@ const base = process.env.VITEPRESS_BASE || '/BMapViewer/'
 export default defineConfig({
   base,
   title: 'BMapViewer',
-  description: '基于 Vue 3 与 Cesium 的地理信息可视化组件 SDK',
+  description: '面向 Vue 3 应用的 Cesium 地理信息可视化 SDK',
   lang: 'zh-CN',
   cleanUrls: true,
   vite: {
@@ -21,6 +21,7 @@ export default defineConfig({
       { text: '组件 API', link: '/api' },
       { text: '图层', link: '/layers' },
       { text: '天气粒子', link: '/weather' },
+      { text: '在线预览', link: 'https://banyan666.github.io/BMapViewer/' },
       { text: 'GitHub', link: 'https://github.com/banyan666/BMapViewer' },
     ],
     sidebar: [
