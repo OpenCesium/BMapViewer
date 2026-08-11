@@ -12,6 +12,7 @@ permissions:
 jobs:
   publish:
     name: Build and publish
+    if: github.repository == 'banyan666/BMapViewer'
     runs-on: ubuntu-latest
 
     steps:

@@ -1,0 +1,31 @@
+name: Sync community fork
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-community-fork
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Fast-forward from personal upstream
+    if: github.repository != 'banyan666/BMapViewer'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Sync main branch from upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "/repos/${GITHUB_REPOSITORY}/merge-upstream" \
+            -f branch=main

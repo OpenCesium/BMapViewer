@@ -89,3 +89,11 @@ git push --follow-tags
 ```
 
 也可以根据语义化版本规则使用 `npm version minor` 或 `npm version major`。
+
+## 社区 Fork 同步
+
+`banyan666/BMapViewer` 是项目唯一的主仓库，代码提交、npm 发布和 GitHub Pages 部署都在主仓库完成。社区 Organization 中的 Fork 仅用于同步展示，不应直接维护发布版本。
+
+社区 Fork 启用 GitHub Actions 后，`.github/workflows/sync-community-fork.yml` 会每 6 小时尝试将 `main` 分支快进到个人主仓库的最新提交，也可以在 Actions 页面手动运行。同步不会强制覆盖社区 Fork 的独立提交；如果分支已经产生冲突，任务会失败并保留现状，需要先处理差异。
+
+Pages 和 npm 工作流都限制为只在 `banyan666/BMapViewer` 中运行，因此社区 Fork 不会重复部署站点或发布 npm 包。

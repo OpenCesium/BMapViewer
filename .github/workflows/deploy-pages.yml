@@ -18,6 +18,7 @@ concurrency:
 jobs:
   build:
     name: Build Pages artifact
+    if: github.repository == 'banyan666/BMapViewer'
     runs-on: ubuntu-latest
 
     steps:
