@@ -2,7 +2,6 @@ import IconGroupLayer from "./IconGroupLayer.js";
 import LabelGroupLayer from "./LabelGroupLayer.js";
 import LineGroupLayer from "./LineGroupLayer.js";
 import LinePrimitiveLayer from "./LinePrimitiveLayer.js";
-import BaseMapLayer from "./BaseMapLayer.js";
 import Build3DLayer from "./Build3DLayer.js";
 import BubbleLayer from "./BubbleLayer.js";
 import BubbleGroupLayer from './BubbleGroupLayer.js'
@@ -17,7 +16,6 @@ import HeatmapPrimitiveLayer from "./HeatmapPrimitiveLayer.js";
 import RadarScanner3DLayer from "./RadarScanner3DLayer.js";
 
 export default {
-    BaseMapLayer,
     IconGroupLayer,
     LabelGroupLayer,
     LineGroupLayer,

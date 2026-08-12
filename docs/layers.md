@@ -10,7 +10,6 @@ import { MapLayers } from 'b-map-viewer'
 
 | 分类 | 图层 |
 | --- | --- |
-| 基础底图 | `BaseMapLayer` |
 | 点位与标注 | `IconGroupLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
 | 线与面 | `LineGroupLayer`、`LinePrimitiveLayer`、`LineMaterialLayer`、`PolygonPrimitiveLayer` |
 | 动态效果 | `CircleGroupLayer`、`CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
@@ -39,6 +38,4 @@ layer.setData([
 layer.destroy()
 ```
 
-## BaseMapLayer 说明
-
-`BaseMapLayer` 适用于 URL 模板影像，并内置高德墨卡托偏移修正。如果影像服务使用标准 Web Mercator 或其他坐标体系，建议根据服务规范使用 Cesium 原生 `ImageryLayer` / `UrlTemplateImageryProvider`。
+底图不属于业务图层，统一由独立的 [`BaseMaps` 底图模块](/base-maps) 管理。

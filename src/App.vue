@@ -4,6 +4,7 @@ import BasicExample from '../examples/BasicExample.vue'
 import { findExampleModule, projectLinks } from '../examples/modules.js'
 
 const routeComponents = {
+  'base-maps': defineAsyncComponent(() => import('../examples/BaseMapPlayground.vue')),
   layers: defineAsyncComponent(() => import('../examples/LayerPlayground.vue')),
   'pick-tools': defineAsyncComponent(() => import('../examples/PickToolsPlayground.vue')),
   weather: defineAsyncComponent(() => import('../examples/WeatherCatalog.vue')),

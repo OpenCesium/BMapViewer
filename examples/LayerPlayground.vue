@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import * as Cesium from 'cesium'
-import { BMapViewer, MapLayers } from '../src/sdk/index.js'
+import { BaseMaps, BMapViewer, MapLayers } from '../src/sdk/index.js'
 import { layerExamples, layerGroups } from './layers/index.js'
 
 const HOME_CAMERA = {
@@ -31,7 +31,7 @@ const runDuration = ref(0)
 const coordinate = ref(null)
 
 let viewer = null
-let baseMapLayer = null
+let baseMap = null
 let activeCleanup = null
 let runVersion = 0
 let resizeTimer = null
@@ -246,8 +246,10 @@ function handleEditorKeydown(event) {
 async function handleViewerReady(readyViewer) {
   viewer = readyViewer
   viewerReady.value = true
-  baseMapLayer = new MapLayers.BaseMapLayer(viewer, {
+  baseMap = new BaseMaps.BaseMap(viewer, {
+    type: 'offline',
     url: tileUrl,
+    coordinateSystem: 'GCJ02',
     minimumLevel: 1,
     maximumLevel: 12,
     themeColor: '#34A4FF',
@@ -278,8 +280,8 @@ async function toggleCodePanel() {
 onBeforeUnmount(() => {
   clearTimeout(resizeTimer)
   runVersion += 1
-  baseMapLayer?.removeLayer()
-  baseMapLayer = null
+  baseMap?.destroy()
+  baseMap = null
   disposeActive()
   viewer = null
 })

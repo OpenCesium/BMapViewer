@@ -3,6 +3,8 @@
 ## 仓库职责
 
 - `src/sdk/`：可发布 SDK 源码，不能引用仓库外资源。
+- `src/sdk/base-map/`：独立 BaseMaps 模块，包含底图管理器、Provider、投影与切片方案。
+- `src/sdk/weather/`：WeatherEffects 后处理天气效果与生命周期管理器。
 - `examples/`：示例组件，开发服务器入口由 `src/App.vue` 提供。
 - `docs/`：Markdown 文档。
 - `docs/.vitepress/`：技术文档站点配置与主题。
@@ -32,11 +34,13 @@ Cesium 的 Workers 等运行时资源由应用侧的 `vite-plugin-cesium` 负责
 
 Cesium 1.118 的 KML 模块仍使用 `@zip.js/zip.js/lib/zip-no-worker.js` 子路径，因此项目固定 `@zip.js/zip.js@2.7.73`，避免新版移除该导出后导致 Vite 开发服务器预打包失败。
 
+BaseMaps 中的地图 Provider、坐标转换、投影与自定义切片方案基于 Apache-2.0 许可的 [`@dvgis/cesium-map`](https://github.com/dvgis/cesium-map) 适配，已统一改用 BMapViewer 的 `cesium` peer dependency、ES Module 路径和生命周期规范。发布包会携带根目录 `NOTICE`。
+
 ## 发布前检查
 
 1. 执行 `npm ci`。
 2. 执行 `npm run build`。
-3. 运行 `npm run dev`，检查初始化、点击拾取和图层示例。
+3. 运行 `npm run dev`，检查初始化、底图切换、点击拾取、图层示例和天气切换。
 4. 检查 `git status`，确认只包含本次发布需要的文件。
 
 ## GitHub Pages 自动部署

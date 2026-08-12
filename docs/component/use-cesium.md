@@ -15,7 +15,7 @@ useCesium 是一个用于 初始化和管理 Cesium Viewer 的 Hook 工具函数
 详细可参考[方式 2：Hook 方式](/introduction/hello#方式-2-hook-方式)。
 
 ```js
-import {MapLayers, useCesium} from "b-map-viewer";
+import {useCesium} from "b-map-viewer";
 import 'b-map-viewer/style.css'
 
 const {initCesium, setMapCenter, setViewer} = useCesium()

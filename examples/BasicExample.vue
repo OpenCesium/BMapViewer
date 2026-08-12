@@ -5,8 +5,8 @@ const emit = defineEmits(['navigate'])
 
 const productFacts = [
   { value: 'Vue 3', label: '组件化 Viewer 生命周期' },
-  { value: '17', label: '内置可视化图层' },
-  { value: 'Offline', label: '瓦片与 3D Tiles 数据' },
+  { value: '07', label: '多源底图 Provider' },
+  { value: '16', label: '内置可视化图层' },
   { value: 'GeoJSON', label: '统一业务数据结构' },
 ]
 
@@ -46,14 +46,14 @@ function scrollToCapabilities() {
             <span>让 Cesium 业务能力<br />成为可复用的 Vue 组件。</span>
           </h1>
           <p class="hero-description">
-            BMapViewer 是面向 Vue 3 项目的 Cesium 可视化组件 SDK。它统一管理 Viewer 的初始化、相机与交互生命周期，并把常用地图能力封装成可以独立创建、更新和销毁的业务图层。
+            BMapViewer 是面向 Vue 3 项目的 Cesium 可视化组件 SDK。它统一管理 Viewer 的初始化、相机与交互生命周期，并将多源底图、可视化图层和地图工具组织为职责清晰的独立模块。
           </p>
           <p class="hero-usecase">
             适用于三维 GIS、离线地图、园区态势、设备监控和专题分析等需要快速组织地理数据的应用。
           </p>
           <div class="hero-actions">
             <button type="button" @click="openModule(exampleModules[0])">
-              运行图层示例 <span>→</span>
+              运行底图示例 <span>→</span>
             </button>
             <a :href="projectLinks.gettingStarted" target="_blank" rel="noreferrer">快速开始</a>
           </div>
@@ -68,6 +68,7 @@ function scrollToCapabilities() {
           <span class="coordinate coordinate-right">125°50′02″ E</span>
           <span class="atlas-label">BMAP<br />VIEWER<small>SDK CORE</small></span>
           <span class="module-point point-layer"><i></i>LAYER</span>
+          <span class="module-point point-base"><i></i>BASE</span>
           <span class="module-point point-pick"><i></i>PICK</span>
           <span class="module-point point-analysis"><i></i>ANALYSIS</span>
           <span class="module-point point-weather"><i></i>WEATHER</span>
@@ -142,11 +143,11 @@ function scrollToCapabilities() {
         <div class="workflow-line" aria-label="BMapViewer 能力组合方式">
           <span><b>01</b>BMapViewer<small>创建 Cesium 场景</small></span>
           <i>→</i>
-          <span><b>02</b>MapLayers<small>组织可视化图层</small></span>
+          <span><b>02</b>BaseMaps<small>管理多源底图</small></span>
           <i>→</i>
-          <span><b>03</b>PickTools + Turf<small>交互与空间计算</small></span>
+          <span><b>03</b>MapLayers<small>组织可视化图层</small></span>
           <i>→</i>
-          <span><b>04</b>业务模块<small>按需扩展天气与专题</small></span>
+          <span><b>04</b>PickTools + Turf<small>交互与空间计算</small></span>
         </div>
       </section>
     </main>
@@ -266,7 +267,8 @@ h1 span { display: block; margin-top: 17px; font-size: clamp(38px, 4vw, 58px); }
 .scale-line::before { display: block; width: 100%; height: 3px; margin-bottom: 4px; border: 1px solid #477a82; border-top: 0; content: ""; }
 .module-point { position: absolute; display: flex; align-items: center; gap: 6px; color: #8dc1c5; font: 8px "Cascadia Code", monospace; letter-spacing: 0.09em; }
 .module-point i { width: 7px; height: 7px; border: 1px solid currentColor; transform: rotate(45deg); }
-.point-layer { top: 25%; right: 12%; color: var(--cyan); }
+.point-base { top: 25%; right: 12%; color: var(--cyan); }
+.point-layer { top: 42%; right: 5%; color: var(--blue); }
 .point-pick { top: 18%; left: 18%; color: var(--blue); }
 .point-analysis { right: 8%; bottom: 25%; color: var(--green); }
 .point-weather { bottom: 22%; left: 10%; color: var(--amber); }

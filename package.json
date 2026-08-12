@@ -22,7 +22,8 @@
   },
   "files": [
     "BMapViewer",
-    "README.md"
+    "README.md",
+    "NOTICE"
   ],
   "scripts": {
     "generate:demo-tiles": "node scripts/generate-demo-tiles.mjs",

@@ -1,123 +1,394 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
+import { BaseMaps, BMapViewer, WeatherEffects } from '../src/sdk/index.js'
+import { weatherExamples } from './weather/index.js'
 import { exampleModules } from './modules.js'
 
-const weatherModule = exampleModules.find((module) => module.id === 'weather')
-const effects = [
-  { id: 'rain', name: '降雨', code: 'RAIN', description: '屏幕空间雨线、风向和降雨强度控制。', parameters: ['强度', '风向', '速度'] },
-  { id: 'snow', name: '降雪', code: 'SNOW', description: '雪花尺寸、密度、飘落方向与距离衰减。', parameters: ['密度', '粒径', '飘移'] },
-  { id: 'fog', name: '雾', code: 'FOG', description: '按相机距离混合场景颜色，模拟能见度变化。', parameters: ['能见度', '颜色', '衰减'] },
-  { id: 'sand', name: '沙尘', code: 'SAND', description: '暖色颗粒与低能见度组合的沙尘天气。', parameters: ['颗粒', '色调', '风速'] },
-  { id: 'cloud', name: '云层', code: 'CLOUD', description: '面向大范围场景的动态云层与阴影接口。', parameters: ['云量', '高度', '流速'] },
-  { id: 'lightning', name: '闪电', code: 'LIGHTNING', description: '短时曝光、闪烁节奏与区域触发控制。', parameters: ['频率', '亮度', '区域'] },
-]
+const HOME_CAMERA = {
+  longitude: 125.83372000975274,
+  latitude: 44.14712267403385,
+  height: 7600,
+  pitch: -56,
+  minHeight: 40,
+  maxHeight: 800000,
+}
 
-const activeId = ref(effects[0].id)
-const activeEffect = computed(() => effects.find((item) => item.id === activeId.value) || effects[0])
+const weatherDocs = exampleModules.find((module) => module.id === 'weather')?.docs
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
+
+const mapRef = ref(null)
+const editorRef = ref(null)
+const lineNumbersRef = ref(null)
+const activeId = ref(weatherExamples[0].id)
+const code = ref(weatherExamples[0].codeText)
+const isCodePanelOpen = ref(false)
+const viewerReady = ref(false)
+const runState = ref('idle')
+const runMessage = ref('等待 Cesium 初始化')
+const runDuration = ref(null)
+const coordinate = ref(null)
+const stageCount = ref(0)
+
+let viewer = null
+let baseMap = null
+let activeCleanup = null
+let runVersion = 0
+let resizeTimer = null
+
+const activeExample = computed(() => weatherExamples.find((item) => item.id === activeId.value) || weatherExamples[0])
+const lineNumbers = computed(() => Array.from({ length: Math.max(1, code.value.split('\n').length) }, (_, index) => index + 1))
+const isModified = computed(() => code.value !== activeExample.value.codeText)
+const statusLabel = computed(() => ({
+  idle: '待运行',
+  running: '生成天气中',
+  success: '效果运行中',
+  error: '运行失败',
+}[runState.value]))
+
+function readPostProcessStages() {
+  const stages = []
+  const collection = viewer?.scene?.postProcessStages
+  if (!collection || viewer?.isDestroyed()) return stages
+  for (let index = 0; index < collection.length; index += 1) {
+    stages.push(collection.get(index))
+  }
+  return stages
+}
+
+function updateStageCount() {
+  stageCount.value = readPostProcessStages()
+    .filter((stage) => stage?.name?.startsWith('bmap-viewer-weather-'))
+    .length
+}
+
+async function disposeActive() {
+  if (!activeCleanup) return
+  const cleanup = activeCleanup
+  activeCleanup = null
+  try {
+    await cleanup()
+  } catch (error) {
+    console.warn('天气示例清理失败：', error)
+  } finally {
+    updateStageCount()
+  }
+}
+
+async function runCode() {
+  if (!viewer || viewer.isDestroyed() || runState.value === 'running') return
+
+  const startTime = performance.now()
+  const currentRun = ++runVersion
+  runState.value = 'running'
+  runDuration.value = null
+  runMessage.value = `正在生成 ${activeExample.value.title}`
+
+  await disposeActive()
+  if (currentRun !== runVersion) return
+
+  mapRef.value?.flyTo(HOME_CAMERA, 0)
+  const before = new Set(readPostProcessStages())
+
+  try {
+    const execute = new AsyncFunction(
+      'WeatherEffects',
+      'viewer',
+      `'use strict';\n${code.value}`,
+    )
+    const result = await execute(WeatherEffects, viewer)
+    const cleanup = async () => {
+      if (typeof result === 'function') await result()
+      else if (typeof result?.destroy === 'function') result.destroy()
+      else if (typeof result?.remove === 'function') result.remove()
+
+      if (!viewer || viewer.isDestroyed()) return
+      readPostProcessStages()
+        .filter((stage) => !before.has(stage))
+        .forEach((stage) => viewer.scene.postProcessStages.remove(stage))
+    }
+
+    if (currentRun !== runVersion) {
+      await cleanup()
+      return
+    }
+
+    activeCleanup = cleanup
+    runState.value = 'success'
+    runMessage.value = `${activeExample.value.title}效果已加载`
+    runDuration.value = Math.round(performance.now() - startTime)
+    updateStageCount()
+  } catch (error) {
+    readPostProcessStages()
+      .filter((stage) => !before.has(stage))
+      .forEach((stage) => viewer.scene.postProcessStages.remove(stage))
+    runState.value = 'error'
+    runMessage.value = error?.message || String(error)
+    runDuration.value = Math.round(performance.now() - startTime)
+    updateStageCount()
+    console.error('天气示例运行失败：', error)
+  }
+}
+
+async function selectExample(example) {
+  if (activeId.value === example.id) return
+  runVersion += 1
+  await disposeActive()
+  activeId.value = example.id
+  code.value = example.codeText
+  runState.value = 'idle'
+  runMessage.value = '示例已切换，准备运行'
+  await nextTick()
+  runCode()
+}
+
+function resetCode() {
+  code.value = activeExample.value.codeText
+  runMessage.value = '已恢复默认示例代码'
+}
+
+function syncEditorScroll() {
+  if (lineNumbersRef.value && editorRef.value) {
+    lineNumbersRef.value.scrollTop = editorRef.value.scrollTop
+  }
+}
+
+function handleEditorKeydown(event) {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+    event.preventDefault()
+    runCode()
+    return
+  }
+  if (event.key === 'Tab') {
+    event.preventDefault()
+    const start = event.target.selectionStart
+    const end = event.target.selectionEnd
+    code.value = `${code.value.slice(0, start)}  ${code.value.slice(end)}`
+    nextTick(() => {
+      event.target.selectionStart = event.target.selectionEnd = start + 2
+    })
+  }
+}
+
+async function handleViewerReady(readyViewer) {
+  viewer = readyViewer
+  baseMap = new BaseMaps.BaseMap(viewer, {
+    type: 'arcgis',
+    url: BaseMaps.arcgisWorldImageryUrl,
+    maximumLevel: 23,
+  })
+  viewerReady.value = true
+  runMessage.value = 'Cesium 已就绪'
+  await nextTick()
+  runCode()
+}
+
+function handleViewerError(error) {
+  runState.value = 'error'
+  runMessage.value = error?.message || 'Cesium 初始化失败'
+}
+
+function handleMapClick(payload) {
+  coordinate.value = `${payload.lon.toFixed(5)}, ${payload.lat.toFixed(5)}`
+}
+
+async function toggleCodePanel() {
+  isCodePanelOpen.value = !isCodePanelOpen.value
+  await nextTick()
+  viewer?.resize()
+  clearTimeout(resizeTimer)
+  resizeTimer = setTimeout(() => viewer?.resize(), 460)
+}
+
+onBeforeUnmount(() => {
+  clearTimeout(resizeTimer)
+  runVersion += 1
+  disposeActive()
+  baseMap?.destroy()
+  baseMap = null
+  viewer = null
+})
 </script>
 
 <template>
   <div class="weather-lab">
-    <aside class="weather-index">
-      <p>WEATHER INDEX</p>
-      <div class="index-heading"><h1>天气目录</h1><span>{{ effects.length }}</span></div>
-      <nav aria-label="天气粒子效果">
-        <button
-          v-for="(effect, index) in effects"
-          :key="effect.id"
-          type="button"
-          :class="{ active: activeId === effect.id }"
-          @click="activeId = effect.id"
-        >
-          <span>{{ String(index + 1).padStart(2, '0') }}</span>
-          <strong>{{ effect.name }}</strong>
-          <small>{{ effect.code }}</small>
-        </button>
-      </nav>
-    </aside>
+    <header class="lab-header">
+      <div class="brand-block">
+        <span class="brand-mark" aria-hidden="true"><i></i><b></b></span>
+        <div><strong>WeatherEffects</strong><p>Cesium 屏幕空间天气粒子实验室</p></div>
+      </div>
+      <div class="header-metrics">
+        <div><span>天气效果</span><strong>{{ weatherExamples.length }}</strong></div>
+        <div><span>渲染方式</span><strong>POST PROCESS</strong></div>
+        <div><span>活动阶段</span><strong>{{ String(stageCount).padStart(2, '0') }}</strong></div>
+        <div class="runtime-dot" :class="runState"><i></i><strong>{{ statusLabel }}</strong></div>
+      </div>
+    </header>
 
-    <section class="weather-stage">
-      <div class="particle-field" aria-hidden="true">
-        <i v-for="index in 20" :key="index" :style="{ '--i': index }"></i>
-      </div>
-      <div class="stage-grid" aria-hidden="true"></div>
-      <div class="effect-state">
-        <span>MODULE SCAFFOLD / {{ activeEffect.code }}</span>
-        <h2>{{ activeEffect.name }}</h2>
-        <p>{{ activeEffect.description }}</p>
-        <ul>
-          <li v-for="parameter in activeEffect.parameters" :key="parameter">{{ parameter }}</li>
-        </ul>
-        <div class="pending-note">
-          <i></i>
-          <div><strong>目录已预留</strong><small>接入粒子实现后，可在此加入可编辑代码与 Cesium 实时预览。</small></div>
+    <main class="lab-grid" :class="{ 'code-panel-open': isCodePanelOpen }">
+      <aside class="catalog-panel">
+        <span class="panel-kicker">WEATHER INDEX</span>
+        <div class="catalog-heading"><h1>天气目录</h1><b>{{ weatherExamples.length }}</b></div>
+        <nav aria-label="天气粒子示例">
+          <button
+            v-for="(example, index) in weatherExamples"
+            :key="example.id"
+            type="button"
+            :class="{ active: activeId === example.id }"
+            @click="selectExample(example)"
+          >
+            <span>{{ String(index + 1).padStart(2, '0') }}</span>
+            <span><strong>{{ example.title }}</strong><small>{{ example.name }}</small></span>
+            <i>›</i>
+          </button>
+        </nav>
+        <a v-if="weatherDocs" class="docs-link" :href="weatherDocs" target="_blank" rel="noreferrer">天气系统文档 ↗</a>
+      </aside>
+
+      <section class="code-panel" :class="{ collapsed: !isCodePanelOpen }" aria-label="天气示例代码编辑器">
+        <button
+          type="button"
+          class="code-toggle"
+          :aria-expanded="isCodePanelOpen"
+          aria-controls="weather-code-panel-body"
+          :title="isCodePanelOpen ? '收起示例代码' : '展开示例代码'"
+          @click="toggleCodePanel"
+        ><span :class="{ open: isCodePanelOpen }">›</span><b>EDITABLE EXAMPLE</b></button>
+
+        <div id="weather-code-panel-body" class="code-body" :aria-hidden="!isCodePanelOpen">
+          <div class="code-heading">
+            <div><span class="panel-kicker">EDITABLE WEATHER</span><h2>{{ activeExample.name }}</h2></div>
+            <em v-if="isModified">已修改</em>
+          </div>
+          <p>{{ activeExample.summary }}</p>
+          <div class="parameter-line"><span>可调参数</span><code v-for="parameter in activeExample.parameters" :key="parameter">{{ parameter }}</code></div>
+          <div class="scope-line"><span>可用变量</span><code>WeatherEffects</code><code>viewer</code></div>
+          <div class="editor-shell">
+            <pre ref="lineNumbersRef" aria-hidden="true">{{ lineNumbers.join('\n') }}</pre>
+            <textarea
+              ref="editorRef"
+              v-model="code"
+              spellcheck="false"
+              aria-label="可编辑天气 JavaScript 示例代码"
+              @scroll="syncEditorScroll"
+              @keydown="handleEditorKeydown"
+            ></textarea>
+          </div>
+          <div class="run-status" :class="runState"><span><i></i>{{ runMessage }}</span><time v-if="runDuration !== null">{{ runDuration }} ms</time></div>
+          <div class="code-actions">
+            <button type="button" :disabled="!viewerReady || runState === 'running'" @click="runCode">▶ 运行当前示例</button>
+            <button type="button" :disabled="!isModified" @click="resetCode">恢复代码</button>
+            <span>Ctrl ↵</span>
+          </div>
         </div>
-        <a :href="weatherModule.docs" target="_blank" rel="noreferrer">查看模块约定 ↗</a>
-      </div>
-      <div class="telemetry" aria-hidden="true">
-        <span>WIND / 024°</span><span>VIS / 8.2 KM</span><span>FPS / --</span>
-      </div>
-    </section>
+      </section>
+
+      <section class="map-panel" aria-label="WeatherEffects Cesium 运行预览">
+        <BMapViewer
+          ref="mapRef"
+          :camera="HOME_CAMERA"
+          :scene-mode="1"
+          base-color="#182634"
+          @ready="handleViewerReady"
+          @error="handleViewerError"
+          @click="handleMapClick"
+        />
+        <div class="map-title">
+          <span>LIVE WEATHER / {{ activeExample.code }}</span>
+          <strong>{{ activeExample.title }}</strong>
+          <small>{{ activeExample.name }}</small>
+        </div>
+        <div class="weather-scale" aria-hidden="true"><span></span><span></span><span></span><span></span><b>{{ activeExample.code }}</b></div>
+        <div class="map-guide">◇ 底图统一使用 ArcGIS World Imagery；修改左侧参数后运行，切换示例会自动销毁上一效果。</div>
+        <div class="map-footer">
+          <span>ARCGIS WORLD IMAGERY · WGS84</span>
+          <span>{{ coordinate || `${stageCount} ACTIVE WEATHER STAGE` }}</span>
+        </div>
+      </section>
+    </main>
   </div>
 </template>
 
 <style scoped>
-.weather-lab {
-  --line: rgba(129, 184, 201, 0.16);
-  --muted: #708d96;
-  --text: #e4f3f2;
-  --amber: #f3c96f;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  overflow: hidden;
-  color: var(--text);
-  background: #061018;
-  font-family: "Bahnschrift", "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-.weather-index { min-height: 0; padding: 28px 0; border-right: 1px solid var(--line); background: #08141c; }
-.weather-index > p { margin: 0 20px; color: #58727a; font: 8px "Cascadia Code", monospace; letter-spacing: 0.18em; }
-.index-heading { margin: 9px 20px 24px; display: flex; align-items: center; justify-content: space-between; }
-.index-heading h1 { margin: 0; font-size: 21px; font-weight: 550; }
-.index-heading span { color: var(--amber); font: 700 12px "Cascadia Code", monospace; }
-.weather-index nav { display: grid; }
-.weather-index button { position: relative; min-height: 58px; padding: 8px 20px; display: grid; grid-template-columns: 28px 1fr; grid-template-rows: auto auto; align-items: center; border: 0; border-left: 2px solid transparent; color: #75919a; text-align: left; background: transparent; cursor: pointer; }
-.weather-index button:hover { color: #cfdfdf; background: rgba(243, 201, 111, 0.04); }
-.weather-index button.active { border-left-color: var(--amber); color: white; background: linear-gradient(90deg, rgba(243, 201, 111, 0.12), transparent); }
-.weather-index button > span { grid-row: 1 / 3; color: #48636c; font: 9px "Cascadia Code", monospace; }
-.weather-index button strong { font-size: 13px; font-weight: 500; }
-.weather-index button small { color: #536f78; font: 8px "Cascadia Code", monospace; letter-spacing: 0.1em; }
-.weather-stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: radial-gradient(circle at 60% 35%, #183848 0, #0b202b 34%, #061018 72%); }
-.stage-grid { position: absolute; inset: 0; opacity: 0.4; background: linear-gradient(rgba(131, 190, 198, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(131, 190, 198, 0.08) 1px, transparent 1px); background-size: 68px 68px; transform: perspective(500px) rotateX(58deg) scale(1.5) translateY(27%); transform-origin: bottom; }
-.particle-field { position: absolute; inset: 0; overflow: hidden; }
-.particle-field i { --delay: calc(var(--i) * -0.31s); position: absolute; top: -18%; left: calc(var(--i) * 4.7%); width: 1px; height: calc(28px + var(--i) * 2px); opacity: 0.34; background: linear-gradient(transparent, #a8d8dc); transform: rotate(14deg); animation: rain-line calc(1.25s + var(--i) * 0.02s) linear var(--delay) infinite; }
-.effect-state { position: relative; z-index: 2; width: min(560px, calc(100% - 80px)); margin: clamp(80px, 13vh, 150px) 0 0 clamp(40px, 9vw, 130px); }
-.effect-state > span { color: var(--amber); font: 8px "Cascadia Code", monospace; letter-spacing: 0.17em; }
-.effect-state h2 { margin: 18px 0 12px; font-size: clamp(46px, 7vw, 92px); font-weight: 500; letter-spacing: -0.055em; }
-.effect-state > p { max-width: 520px; margin: 0; color: #819da5; font-size: 14px; line-height: 1.8; }
-.effect-state ul { margin: 24px 0 0; padding: 0; display: flex; gap: 8px; list-style: none; }
-.effect-state li { padding: 6px 9px; border: 1px solid rgba(243, 201, 111, 0.18); color: #9b8c67; background: rgba(17, 27, 30, 0.5); font: 8px "Cascadia Code", monospace; }
-.pending-note { max-width: 520px; margin-top: 42px; padding: 15px 17px; display: flex; align-items: center; gap: 13px; border-left: 2px solid var(--amber); background: rgba(6, 16, 24, 0.7); backdrop-filter: blur(10px); }
-.pending-note > i { width: 8px; height: 8px; border: 1px solid var(--amber); transform: rotate(45deg); }
-.pending-note strong,
-.pending-note small { display: block; }
-.pending-note strong { font-size: 11px; }
-.pending-note small { margin-top: 4px; color: #657f87; font-size: 9px; line-height: 1.45; }
-.effect-state > a { display: inline-block; margin-top: 18px; color: #9eaa9a; font-size: 10px; text-underline-offset: 5px; }
-.effect-state > a:hover { color: var(--amber); }
-.telemetry { position: absolute; right: 22px; bottom: 18px; left: 22px; display: flex; justify-content: space-between; color: #47656e; font: 8px "Cascadia Code", monospace; letter-spacing: 0.1em; }
-button:focus-visible,
-a:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-@keyframes rain-line { from { transform: translate3d(-80px, -20vh, 0) rotate(14deg); } to { transform: translate3d(100px, 125vh, 0) rotate(14deg); } }
-@media (max-width: 720px) {
-  .weather-lab { grid-template-columns: 110px minmax(0, 1fr); }
-  .weather-index { padding-top: 18px; }
-  .weather-index > p,
-  .index-heading { margin-right: 10px; margin-left: 10px; }
-  .index-heading h1 { font-size: 15px; }
-  .weather-index button { padding: 8px 9px; grid-template-columns: 22px 1fr; }
-  .effect-state { width: calc(100% - 36px); margin: 55px 18px 0; }
-}
-@media (prefers-reduced-motion: reduce) { .particle-field i { animation: none; } }
+.weather-lab { --bg: #060c11; --panel: #0a141a; --line: #26333a; --amber: #f3c96f; --ice: #b8d8df; width: 100%; height: 100%; display: grid; grid-template-rows: 68px minmax(0, 1fr); overflow: hidden; color: #e8f1ef; background: var(--bg); font-family: "Bahnschrift", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.lab-header { padding-left: 20px; display: flex; align-items: stretch; justify-content: space-between; border-bottom: 1px solid var(--line); background: #071016; }
+.brand-block { display: flex; align-items: center; gap: 14px; }
+.brand-block strong { font: 600 17px "Cascadia Code", monospace; letter-spacing: .035em; }
+.brand-block p { margin: 5px 0 0; color: #72878c; font-size: 10px; }
+.brand-mark { position: relative; width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid #776b4a; border-radius: 50%; }
+.brand-mark::before, .brand-mark::after { position: absolute; content: ""; background: var(--amber); }
+.brand-mark::before { width: 1px; height: 48px; }
+.brand-mark::after { width: 48px; height: 1px; }
+.brand-mark i { width: 13px; height: 13px; border: 1px solid var(--amber); border-radius: 50%; box-shadow: 0 0 14px rgba(243, 201, 111, .45); }
+.brand-mark b { position: absolute; inset: 5px; border: 1px dashed rgba(243, 201, 111, .35); border-radius: 50%; }
+.header-metrics { display: flex; }
+.header-metrics > div { min-width: 125px; padding: 0 18px; display: grid; align-content: center; gap: 5px; border-left: 1px solid var(--line); }
+.header-metrics span { color: #667a7f; font-size: 8px; letter-spacing: .08em; }
+.header-metrics strong { font: 600 10px "Cascadia Code", monospace; }
+.runtime-dot { grid-template-columns: 8px auto; align-items: center; }
+.runtime-dot i, .run-status i { width: 5px; height: 5px; border-radius: 50%; background: #76888c; }
+.runtime-dot.running i, .run-status.running i { background: var(--amber); animation: status-pulse 900ms ease-in-out infinite alternate; }
+.runtime-dot.success i, .run-status.success i { background: #a9ebda; box-shadow: 0 0 9px #a9ebda; }
+.runtime-dot.error i, .run-status.error i { background: #ff716c; }
+.lab-grid { min-height: 0; display: grid; grid-template-columns: 220px 44px minmax(0, 1fr); transition: grid-template-columns 250ms cubic-bezier(.22,1,.36,1) 150ms; }
+.lab-grid.code-panel-open { grid-template-columns: 220px minmax(370px, 440px) minmax(0, 1fr); transition-delay: 0ms; }
+.catalog-panel { position: relative; min-width: 0; overflow: auto; border-right: 1px solid var(--line); background: linear-gradient(180deg, #0a151b, #081116); }
+.panel-kicker { color: #a88e56; font: 8px "Cascadia Code", monospace; letter-spacing: .16em; }
+.catalog-panel > .panel-kicker { display: block; padding: 18px 18px 7px; }
+.catalog-heading { padding: 0 18px 17px; display: flex; align-items: center; justify-content: space-between; }
+.catalog-heading h1 { margin: 0; font-size: 19px; font-weight: 560; }
+.catalog-heading b { color: var(--amber); font: 11px "Cascadia Code", monospace; }
+.catalog-panel nav { border-top: 1px solid #1e2b31; }
+.catalog-panel nav button { width: 100%; min-height: 58px; padding: 8px 13px 8px 18px; display: grid; grid-template-columns: 26px 1fr 10px; align-items: center; gap: 9px; border: 0; border-left: 2px solid transparent; color: #7b9094; background: transparent; text-align: left; cursor: pointer; transition: color 160ms ease, background-color 160ms ease; }
+.catalog-panel nav button:hover { color: #d8e2df; background: #101e23; }
+.catalog-panel nav button.active { border-left-color: var(--amber); color: #fff8e8; background: linear-gradient(90deg, rgba(243, 201, 111, .13), rgba(243, 201, 111, .015)); }
+.catalog-panel nav button > span:first-child { color: #596b6e; font: 8px "Cascadia Code", monospace; }
+.catalog-panel nav button > span:nth-child(2) { display: grid; gap: 4px; }
+.catalog-panel nav strong { font-size: 12px; font-weight: 500; }
+.catalog-panel nav small { color: #596e72; font: 8px "Cascadia Code", monospace; }
+.catalog-panel nav i { color: #a38b57; font: 18px/1 "Cascadia Code", monospace; font-style: normal; }
+.docs-link { position: absolute; right: 17px; bottom: 17px; left: 17px; padding: 11px 12px; border: 1px solid #3a382c; color: #a69268; background: rgba(18, 24, 24, .85); font-size: 9px; text-decoration: none; }
+.docs-link:hover { border-color: #786840; color: var(--amber); }
+.code-panel { position: relative; z-index: 5; min-width: 0; display: grid; grid-template-columns: 44px minmax(0, 1fr); overflow: hidden; border-right: 1px solid var(--line); background: #071116; }
+.code-toggle { position: relative; z-index: 8; width: 44px; min-height: 0; padding: 14px 0; display: flex; flex-direction: column; align-items: center; gap: 14px; border: 0; border-right: 1px solid var(--line); color: #887b5d; background: linear-gradient(180deg, #101b1e, #091318); cursor: pointer; }
+.code-toggle:hover { color: var(--amber); background: #142126; }
+.code-toggle span { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid #4c4634; color: var(--amber); background: #11191a; font: 22px/1 "Cascadia Code", monospace; transition: transform 250ms cubic-bezier(.22,1,.36,1), background-color 180ms ease; }
+.code-toggle span.open { transform: rotate(180deg); }
+.code-toggle b { writing-mode: vertical-rl; color: currentColor; font: 700 8px/1 "Cascadia Code", monospace; letter-spacing: .18em; }
+.code-body { min-width: 396px; height: 100%; padding: 20px 20px 18px; display: grid; grid-template-rows: auto auto auto auto minmax(170px, 1fr) auto auto; gap: 9px; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(.22,1,.36,1) 120ms, visibility 0s linear 0s; }
+.collapsed .code-body { visibility: hidden; opacity: 0; transform: translateX(-10px); pointer-events: none; transition: opacity 140ms ease 0ms, transform 160ms ease 0ms, visibility 0s linear 140ms; }
+.code-heading { display: flex; justify-content: space-between; align-items: start; }
+.code-heading h2 { margin: 8px 0 0; font: 600 14px "Cascadia Code", monospace; }
+.code-heading em { padding: 3px 6px; color: #f2ca71; background: #2a2414; font-size: 8px; font-style: normal; }
+.code-body > p { margin: 0; color: #7c9195; font-size: 10px; line-height: 1.55; }
+.parameter-line, .scope-line { display: flex; align-items: center; gap: 5px; overflow: hidden; }
+.parameter-line span, .scope-line span { flex: 0 0 auto; margin-right: 4px; color: #586b70; font-size: 8px; }
+.parameter-line code, .scope-line code { padding: 2px 5px; color: #b8a06c; background: #1c201d; font: 8px "Cascadia Code", monospace; }
+.scope-line code { color: #79a9ad; background: #0c2025; }
+.editor-shell { min-height: 0; display: grid; grid-template-columns: 42px 1fr; border: 1px solid #26373d; background: #040b0f; }
+.editor-shell pre { margin: 0; padding: 12px 9px; overflow: hidden; border-right: 1px solid #25343a; color: #516267; text-align: right; font: 10px/1.65 "Cascadia Code", monospace; user-select: none; }
+.editor-shell textarea { min-width: 0; padding: 12px 13px; resize: none; border: 0; outline: 0; color: #e1ebe8; background: transparent; caret-color: var(--amber); font: 10px/1.65 "Cascadia Code", Consolas, monospace; white-space: pre; tab-size: 2; }
+.run-status { min-height: 37px; padding: 0 11px; display: flex; align-items: center; justify-content: space-between; gap: 9px; color: #82989b; background: #0e1c20; font: 9px "Cascadia Code", monospace; }
+.run-status > span { min-width: 0; display: flex; align-items: center; gap: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.run-status time { flex: 0 0 auto; color: #607479; }
+.code-actions { display: flex; align-items: center; gap: 8px; }
+.code-actions button { min-height: 34px; padding: 0 12px; border: 1px solid #2b3c42; color: #74888c; background: transparent; cursor: pointer; font-size: 9px; }
+.code-actions button:first-child { border-color: var(--amber); color: #15130c; background: var(--amber); font-weight: 700; }
+.code-actions button:disabled { opacity: .35; cursor: not-allowed; }
+.code-actions span { margin-left: auto; color: #526469; font: 8px "Cascadia Code", monospace; }
+.map-panel { position: relative; min-width: 0; overflow: hidden; background: #14232d; }
+.map-panel::after { position: absolute; z-index: 1; inset: 0; content: ""; background: linear-gradient(90deg, rgba(12, 19, 22, .28), transparent 28%), linear-gradient(180deg, rgba(7, 13, 17, .18), transparent 24%); pointer-events: none; }
+.map-title { position: absolute; z-index: 2; top: 20px; left: 22px; min-width: 210px; padding: 11px 15px; display: grid; gap: 5px; border-left: 2px solid var(--amber); background: rgba(8, 17, 21, .84); pointer-events: none; backdrop-filter: blur(8px); }
+.map-title span, .map-title small { color: #8f825f; font: 8px "Cascadia Code", monospace; letter-spacing: .1em; }
+.map-title strong { font-size: 17px; font-weight: 500; }
+.weather-scale { position: absolute; z-index: 2; top: 26px; right: 22px; display: flex; align-items: end; gap: 4px; color: var(--amber); pointer-events: none; }
+.weather-scale span { width: 3px; background: var(--amber); opacity: .55; }
+.weather-scale span:nth-child(1) { height: 7px; }.weather-scale span:nth-child(2) { height: 12px; }.weather-scale span:nth-child(3) { height: 18px; }.weather-scale span:nth-child(4) { height: 25px; box-shadow: 0 0 8px var(--amber); }
+.weather-scale b { margin-left: 6px; font: 8px "Cascadia Code", monospace; letter-spacing: .1em; }
+.map-guide { position: absolute; z-index: 2; right: 20px; bottom: 34px; left: 20px; padding: 12px; color: #9aacab; background: rgba(8, 17, 21, .88); border-left: 2px solid var(--amber); font-size: 9px; pointer-events: none; }
+.map-footer { position: absolute; z-index: 2; right: 15px; bottom: 10px; left: 15px; display: flex; justify-content: space-between; color: #667d80; font: 8px "Cascadia Code", monospace; pointer-events: none; }
+button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+@keyframes status-pulse { to { opacity: .32; box-shadow: 0 0 13px var(--amber); } }
+@media (max-width: 1080px) { .header-metrics > div:nth-child(2), .header-metrics > div:nth-child(3) { display: none; } }
+@media (max-width: 900px) { .lab-grid { grid-template-columns: 190px 44px minmax(540px, 1fr); } .lab-grid.code-panel-open { grid-template-columns: 190px 440px minmax(540px, 1fr); } .code-body { min-width: 396px; } }
+@media (prefers-reduced-motion: reduce) { .lab-grid, .code-body, .code-toggle span, .runtime-dot.running i { transition: none; animation: none; } }
 </style>

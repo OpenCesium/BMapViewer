@@ -47,7 +47,19 @@ mapRef.value.flyTo(
 )
 ```
 
+## SDK 模块导出
+
+| 导出 | 说明 |
+| --- | --- |
+| `BMapViewer` | Vue 3 Viewer 组件 |
+| `useCesium` | Viewer 生命周期与相机 Hook |
+| `BaseMaps` | 底图管理器、Provider、样式别名、投影与切片方案 |
+| `MapLayers` | 点、线、面、气泡、热力图和三维业务图层 |
+| `WeatherEffects` | 雨、雪、雾、沙尘、云层、闪电效果与统一天气管理器 |
+| `PickTools` | 拾取与绘制工具 |
+| `EarthColor` | 场景颜色处理工具 |
+| `turf` | Turf 空间分析命名空间 |
+
 ## Slot
 
 `tool` 插槽渲染在 Viewer 容器内部，可用于地图工具栏、图例或状态面板。
-

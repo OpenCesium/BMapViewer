@@ -1,0 +1,8 @@
+BMapViewer
+
+The BaseMaps imagery providers, coordinate transforms, projections, and custom
+tiling-scheme implementations include adaptations of @dvgis/cesium-map:
+https://github.com/dvgis/cesium-map
+
+Copyright Caven Chen and contributors.
+Licensed under the Apache License 2.0.

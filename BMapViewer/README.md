@@ -1,30 +1,34 @@
 # BMapViewer
 
-BMapViewer 是面向 Vue 3 应用的 Cesium 地理信息可视化 SDK。它统一管理 Viewer 初始化、相机控制与资源销毁，并提供可组合的图层、拾取绘制和空间分析能力。
+BMapViewer 是面向 Vue 3 应用的 Cesium 地理信息可视化 SDK。它统一管理 Viewer 初始化、相机控制与资源销毁，并提供职责独立的多源底图、业务图层、拾取绘制、空间分析和天气效果能力。
 
 仓库同时提供 SDK 源码、可编辑在线示例、VitePress 技术文档和多格式构建产物，适合用于三维 GIS、离线地图、园区态势、设备监控与专题分析等场景。
 
 ## 在线资源
 
-- [在线预览](https://banyan666.github.io/BMapViewer/)：浏览图层、拾取绘制与天气模块，并在线编辑运行示例代码。
-- [在线文档](https://banyan666.github.io/BMapViewer/docs/)：查看快速开始、组件 API、图层说明和工具使用指南。
+- [在线预览](https://banyan666.github.io/BMapViewer/)：浏览底图、图层、拾取绘制与天气模块，并在线编辑运行示例代码。
+- [在线文档](https://banyan666.github.io/BMapViewer/docs/)：查看快速开始、组件 API、底图、图层和工具使用指南。
 
 ## 核心能力
 
 | 能力 | 说明 |
 | --- | --- |
 | Viewer 生命周期 | 通过 Vue 组件创建、控制和销毁 `Cesium.Viewer` |
+| 多源底图 | 通过 `BaseMaps` 管理离线瓦片、高德、百度、腾讯、ArcGIS、天地图、Google、GeoVis 和自定义切片 |
 | 可视化图层 | 提供点、线、面、气泡、热力图、3D Tiles 与动态效果图层 |
 | 拾取与绘制 | 支持点、图标点、线、多边形拾取及节点拖拽编辑 |
 | 空间分析 | 集成 Turf，使用 GeoJSON 完成距离、缓冲和空间关系计算 |
+| 天气粒子 | 通过 `WeatherEffects` 提供雨、雪、雾、沙尘、云层和闪电后处理效果 |
 | 离线资源 | 支持本地 TMS 瓦片、3D Tiles 与自定义静态资源 |
 
 ## 目录结构
 
 ```text
 BMapViewer/
-├─ src/sdk/                 # SDK 源码
-├─ examples/                # 可运行示例
+├─ src/sdk/base-map/        # BaseMaps 底图模块
+├─ src/sdk/layer/           # MapLayers 业务图层
+├─ src/sdk/weather/         # WeatherEffects 天气模块
+├─ examples/                # 可编辑运行示例
 ├─ docs/                    # 接入、API 与开发文档
 ├─ BMapViewer/              # npm run build:lib 生成的库文件
 ├─ demo-dist/               # npm run build:demo 生成的示例站点
@@ -43,9 +47,10 @@ npm run dev
 
 示例站以模块主页作为统一入口，当前包含：
 
-- `#/layers`：图层目录与可编辑运行示例
+- `#/base-maps`：离线瓦片与多源 Provider 的可编辑底图示例
+- `#/layers`：业务图层目录与可编辑运行示例
 - `#/pick-tools`：点、图标点、线和多边形拾取示例
-- `#/weather`：天气粒子系统目录骨架
+- `#/weather`：六类天气效果与可编辑运行示例
 
 主页文档链接默认指向 GitHub 仓库中的 Markdown 文件。部署独立文档站时，可以通过 `VITE_DOCS_BASE_URL` 指定文档站根地址：
 
@@ -99,7 +104,7 @@ export default defineConfig({
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { BMapViewer, MapLayers } from 'b-map-viewer'
+import { BaseMaps, BMapViewer, MapLayers } from 'b-map-viewer'
 import 'b-map-viewer/style.css'
 
 const mapRef = ref(null)
@@ -111,6 +116,12 @@ const camera = {
 }
 
 function handleReady(viewer) {
+  new BaseMaps.BaseMap(viewer, {
+    type: 'offline',
+    url: '/tiles/{z}/{x}/{reverseY}.png',
+    coordinateSystem: 'GCJ02',
+  })
+
   const circles = new MapLayers.CircleGroupLayer(viewer, {
     radius: 300,
     fillColor: '#37d6ff',
@@ -146,7 +157,9 @@ SDK 内部已经显式导入 Cesium，不需要再执行 `window.Cesium = Cesium
 - [完整技术文档站点](docs/index.md)
 - [快速开始](docs/getting-started.md)
 - [组件 API](docs/api.md)
+- [底图模块](docs/base-maps.md)
 - [图层模块](docs/layers.md)
+- [天气粒子系统](docs/weather.md)
 - [开发与构建](docs/development.md)
 
 ## 兼容性
@@ -154,7 +167,7 @@ SDK 内部已经显式导入 Cesium，不需要再执行 `window.Cesium = Cesium
 - Vue 3.4+
 - Cesium 1.118.x（当前验证版本为 1.118.2）
 - Vite 5+
--
+
 ## License
 
 [Apache License 2.0](LICENSE)

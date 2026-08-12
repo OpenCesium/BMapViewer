@@ -19,6 +19,7 @@ export default defineConfig({
     nav: [
       { text: '快速开始', link: '/getting-started' },
       { text: '组件 API', link: '/api' },
+      { text: '底图', link: '/base-maps' },
       { text: '图层', link: '/layers' },
       { text: '天气粒子', link: '/weather' },
       { text: '在线预览', link: 'https://banyan666.github.io/BMapViewer/' },
@@ -32,6 +33,7 @@ export default defineConfig({
           { text: '快速开始', link: '/getting-started' },
           { text: 'Hello World', link: '/introduction/hello' },
           { text: '组件 API', link: '/api' },
+          { text: '底图模块', link: '/base-maps' },
           { text: '图层总览', link: '/layers' },
           { text: '开发与构建', link: '/development' },
         ],
@@ -46,10 +48,19 @@ export default defineConfig({
         ],
       },
       {
+        text: '底图 BaseMaps',
+        collapsed: false,
+        items: [
+          { text: '底图模块总览', link: '/base-maps' },
+          { text: '离线瓦片', link: '/base-maps/offline' },
+          { text: '多源 Provider', link: '/base-maps/providers' },
+          { text: '坐标系与自定义切片', link: '/base-maps/tiling-schemes' },
+        ],
+      },
+      {
         text: '可视化图层 MapLayers',
         collapsed: false,
         items: [
-          { text: 'BaseMapLayer 底图', link: '/layers/base-map' },
           { text: 'IconGroupLayer 图标', link: '/layers/icon-group' },
           { text: 'LabelGroupLayer 文字', link: '/layers/label-group' },
           { text: 'BubbleGroupLayer 气泡', link: '/layers/bubble-group' },
@@ -75,9 +86,10 @@ export default defineConfig({
         ],
       },
       {
-        text: '扩展模块',
+        text: '天气 WeatherEffects',
+        collapsed: false,
         items: [
-          { text: '天气粒子系统', link: '/weather' },
+          { text: '天气系统总览', link: '/weather' },
         ],
       },
     ],

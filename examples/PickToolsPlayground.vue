@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
-import { BMapViewer, MapLayers, PickTools } from '../src/sdk/index.js'
+import { BaseMaps, BMapViewer, PickTools } from '../src/sdk/index.js'
 import { pickExamples } from './picks/index.js'
 
 const HOME_CAMERA = {
@@ -28,7 +28,7 @@ const runMessage = ref('等待 Cesium 初始化')
 const resultText = ref('尚未返回坐标')
 
 let viewer = null
-let baseMapLayer = null
+let baseMap = null
 let activeCleanup = null
 let runVersion = 0
 let resizeTimer = null
@@ -168,8 +168,10 @@ function handleEditorKeydown(event) {
 async function handleViewerReady(readyViewer) {
   viewer = readyViewer
   viewerReady.value = true
-  baseMapLayer = new MapLayers.BaseMapLayer(viewer, {
+  baseMap = new BaseMaps.BaseMap(viewer, {
+    type: 'offline',
     url: tileUrl,
+    coordinateSystem: 'GCJ02',
     minimumLevel: 1,
     maximumLevel: 12,
     themeColor: '#34A4FF',
@@ -196,8 +198,8 @@ onBeforeUnmount(() => {
   clearTimeout(resizeTimer)
   runVersion += 1
   disposeActive()
-  baseMapLayer?.removeLayer()
-  baseMapLayer = null
+  baseMap?.destroy()
+  baseMap = null
   viewer = null
 })
 </script>

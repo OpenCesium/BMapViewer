@@ -1,4 +1,3 @@
-import baseMap from './base-map.js'
 import iconGroup from './icon-group.js'
 import labelGroup from './label-group.js'
 import lineGroup from './line-group.js'
@@ -17,7 +16,6 @@ import heatmapPrimitive from './heatmap-primitive.js'
 import radarScanner3d from './radar-scanner-3d.js'
 
 export const layerExamples = [
-  baseMap,
   iconGroup,
   labelGroup,
   lineGroup,

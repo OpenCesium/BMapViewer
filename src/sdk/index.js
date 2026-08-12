@@ -2,6 +2,8 @@ import BMapViewer from './components/BMapViewer.vue'
 import PickTools from './utils/PickTools.js'
 import EarthColor from './utils/EarthColor.js'
 import MapLayers from './layer/index.js'
+import BaseMaps from './base-map/index.js'
+import WeatherEffects from './weather/index.js'
 import * as turf from '@turf/turf'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 import './styles/popup.css'
@@ -16,7 +18,40 @@ const BMapViewerPlugin = {
     },
 }
 
-export { MapLayers }
+export { MapLayers, BaseMaps, WeatherEffects }
+export {
+    BaseMap,
+    createImageryProvider,
+    imageryProviderTypes,
+    AMapImageryProvider,
+    ArcGISImageryProvider,
+    arcgisWorldImageryUrl,
+    BaiduImageryProvider,
+    baiduImageryStyles,
+    TencentImageryProvider,
+    TdtImageryProvider,
+    GoogleImageryProvider,
+    googleImageryStyles,
+    GeoVisImageryProvider,
+    GCJ02TilingScheme,
+    BD09TilingScheme,
+    CustomGeographicTilingScheme,
+    CustomMercatorTilingScheme,
+    BD09Projection,
+    CoordTransform,
+} from './base-map/index.js'
+export {
+    WeatherSystem,
+    createWeatherEffect,
+    weatherEffectTypes,
+    BaseWeatherEffect,
+    RainEffect,
+    SnowEffect,
+    FogEffect,
+    SandstormEffect,
+    CloudEffect,
+    LightningEffect,
+} from './weather/index.js'
 export { PickTools, EarthColor, turf }
 export { useCesium } from './composables/useCesium'
 export { BMapViewer }

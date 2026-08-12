@@ -9,7 +9,7 @@
 
 <script setup>
   import { ref } from 'vue'
-  import {BMapViewer, MapLayers} from "b-map-viewer";
+  import {BaseMaps, BMapViewer} from "b-map-viewer";
   import 'b-map-viewer/style.css'
 
   const cesiumRef = ref(null)
@@ -25,10 +25,14 @@
     height: 8000,
     pitch: 0
   }
-  let baseMapLayer = null
+  let baseMap = null
   const ready = (viewer) => {
     console.log(viewer.scene, 'viewer')
-    baseMapLayer = new MapLayers.BaseMapLayer(viewer, baseMapConfig)
+    baseMap = new BaseMaps.BaseMap(viewer, {
+      type: 'offline',
+      coordinateSystem: 'GCJ02',
+      ...baseMapConfig,
+    })
   }
   const onClick = (e) => {
     console.log(e, 'e')
@@ -54,7 +58,7 @@
 
 <script setup>
 import { nextTick, onMounted } from 'vue'
-import {MapLayers,useCesium} from "b-map-viewer";
+import {BaseMaps, useCesium} from "b-map-viewer";
 import 'b-map-viewer/style.css'
 const {initCesium,setMapCenter} = useCesium()
 const baseMapConfig = {
@@ -69,14 +73,18 @@ const mapConfig={
   height: 8000,
   pitch:0
 }
-let baseMapLayer = null
+let baseMap = null
 onMounted( ()=>{
   nextTick(async ()=>{
     let viewer= await initCesium('cesium-container',{
           sceneMode:0,
           mapConfig: mapConfig, 
     }) //创建地图容器
-    baseMapLayer = new MapLayers.BaseMapLayer(viewer,baseMapConfig) //加载地图
+    baseMap = new BaseMaps.BaseMap(viewer, {
+      type: 'offline',
+      coordinateSystem: 'GCJ02',
+      ...baseMapConfig,
+    })
   })
 })
 </script>

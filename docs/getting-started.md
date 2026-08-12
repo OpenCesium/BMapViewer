@@ -33,7 +33,7 @@ export default defineConfig({
 ## 引入组件
 
 ```js
-import { BMapViewer } from 'b-map-viewer'
+import { BaseMaps, BMapViewer } from 'b-map-viewer'
 import 'b-map-viewer/style.css'
 ```
 
@@ -44,7 +44,7 @@ import 'b-map-viewer/style.css'
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { BMapViewer } from 'b-map-viewer'
+import { BaseMaps, BMapViewer } from 'b-map-viewer'
 import 'b-map-viewer/style.css'
 
 const mapRef = ref(null)
@@ -56,7 +56,13 @@ const camera = {
 }
 
 function onReady(viewer) {
-  console.log('Cesium Viewer 已就绪', viewer)
+  new BaseMaps.BaseMap(viewer, {
+    type: 'offline',
+    url: '/tiles/{z}/{x}/{reverseY}.png',
+    coordinateSystem: 'GCJ02',
+    minimumLevel: 1,
+    maximumLevel: 12,
+  })
 }
 </script>
 
@@ -79,6 +85,8 @@ function onReady(viewer) {
 ## 下一步
 
 - 查看 [BMapViewer 组件 API](/api)
+- 配置 [BaseMaps 底图模块](/base-maps)
 - 浏览 [可视化图层](/layers)
 - 使用 [PickTools 拾取与绘制](/tools/pick-tool)
+- 添加 [WeatherEffects 天气粒子](/weather)
 - 了解 [GeoJSON 数据约定](/data)
