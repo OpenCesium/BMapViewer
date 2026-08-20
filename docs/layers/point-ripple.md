@@ -1,8 +1,9 @@
 # PointRippleLayer 点扩散图层
 
 `PointRippleLayer` 类用于在 Cesium 中实现基于点状要素的动态扩散效果。该图层利用自定义材质（Material）和 `Entity` 的 `ellipse` 图形来实现平滑的径向扩散动画。
-## 效果预览：
-![An image](/layer/point-ripple.gif)
+## 组件案例
+
+<LayerExamplePreview example="point-ripple" title="PointRippleLayer 点扩散" />
 ## 构造函数
 
 `new PointRippleLayer(viewer, config)`
@@ -70,7 +71,7 @@ rippleLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.40, 39.90, 0]
+            coordinates: [125.834, 44.147, 0]
         },
         properties: {
             id: 'ripple-1',

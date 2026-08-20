@@ -75,8 +75,8 @@ const viewer = await initCesium("map-box", {
   sceneMode: 1,
   baseColor: "#001f3f",
   mapConfig: {
-    longitude: 116.39,
-    latitude: 39.9,
+    longitude: 125.834,
+    latitude: 44.147,
     height: 10000,
     pitch: -45，
     minHeight:1,
@@ -136,8 +136,8 @@ setViewer(myViewerInstance)
 
       |    参数    |   类型   |      描述      | 默认值 |
       |:--------:|:------:|:------------:|:----:|
-      | longitude | number |       经度     | 116.40021930621751 |
-      | latitude  | number |       纬度     | 39.89823173640466  |
+      | longitude | number |       经度     | 125.83372000975274 |
+      | latitude  | number |       纬度     | 44.14712267403385  |
       | height    | number |     相机高度   | 10000 |
       | pitch     | number |    相机俯仰角  | 0 |
 
@@ -146,8 +146,8 @@ setViewer(myViewerInstance)
 **示例**
 ```js
 setMapCenter({
-  longitude: 116.39,
-  latitude: 39.9,
+  longitude: 125.834,
+  latitude: 44.147,
   height: 5000,
   pitch: -30
 })
@@ -178,8 +178,8 @@ setMapCenter({
 **示例**
 ```js
 flyTo({
-  longitude: 116.39,
-  latitude: 39.9,
+  longitude: 125.834,
+  latitude: 44.147,
   height: 2000,
   pitch: -45
 }, 2.5)

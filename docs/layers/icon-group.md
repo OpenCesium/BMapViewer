@@ -1,8 +1,9 @@
 # IconGroupLayer 图标组图层
 
 `IconGroupLayer` 类用于在 Cesium 中批量渲染图标（Billboard）。它通过 `Cesium.BillboardCollection` 实现，具有较高的渲染性能，支持自定义图标样式、颜色以及针对不同距离的缩放控制。
-## 效果预览：
-![An image](/layer/icon.gif)
+## 组件案例
+
+<LayerExamplePreview example="icon-group" title="IconGroupLayer 图标标注" />
 ## 构造函数
 
 `new IconGroupLayer(viewer, config)`
@@ -70,7 +71,7 @@ iconLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.39, 39.9]
+            coordinates: [125.834, 44.147]
         },
         properties: {
             id: 'marker-1',

@@ -10,7 +10,7 @@ import { MapLayers } from 'b-map-viewer'
 
 | 分类 | 图层 |
 | --- | --- |
-| 点位与标注 | `IconGroupLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
+| 点位与标注 | `IconGroupLayer`、`IconClusterLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
 | 线与面 | `LineGroupLayer`、`LinePrimitiveLayer`、`LineMaterialLayer`、`PolygonPrimitiveLayer` |
 | 动态效果 | `CircleGroupLayer`、`CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
 | 三维场景 | `Build3DLayer`、`RadarScanner3DLayer` |
@@ -29,7 +29,7 @@ const layer = new MapLayers.CircleGroupLayer(viewer, {
 
 layer.setData([
   {
-    geometry: { coordinates: [116.3974, 39.9093, 0] },
+    geometry: { coordinates: [125.8337, 44.1471, 0] },
     properties: { id: 'point-1' },
   },
 ])

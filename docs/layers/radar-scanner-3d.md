@@ -2,8 +2,9 @@
 
 `RadarScanner3DLayer` 类用于在 Cesium 场景中创建三维半球雷达扫描效果。图层由一个半透明半球体和一个可旋转的扫描扇面组成，适用于监控范围、探测范围、预警区域等三维可视化场景。
 
-## 效果预览：
-![An image](/layer/radar-scanner-3d.gif)
+## 组件案例
+
+<LayerExamplePreview example="radar-scanner-3d" title="RadarScanner3DLayer 三维雷达" />
 
 ## 构造函数
 
@@ -58,7 +59,7 @@ import { MapLayers } from "b-map-viewer";
 
 // 1. 初始化三维雷达扫描图层
 const radarLayer = new MapLayers.RadarScanner3DLayer(viewer, {
-    position: [116.40, 39.90, 100],
+    position: [125.834, 44.147, 100],
     radius: 3000,
     color: 'rgb(5,251,248)',
     outlineColor: '#f1f105',

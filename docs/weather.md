@@ -6,6 +6,17 @@
 
 天气实验室中的六个效果统一使用 ArcGIS World Imagery 作为演示底图，便于在全球影像场景中观察降水、能见度和光照变化。
 
+## 天气案例目录
+
+| 效果 | 实现类 | 重点能力 | 文档与实时案例 |
+| --- | --- | --- | --- |
+| 降雨 | `RainEffect` | 方向、速度、密度、粗细和风偏 | [查看降雨](/weather/rain) |
+| 降雪 | `SnowEffect` | 多尺度雪花、飘移和粒径 | [查看降雪](/weather/snow) |
+| 距离雾 | `FogEffect` | 深度距离、能见度和雾色 | [查看距离雾](/weather/fog) |
+| 沙尘暴 | `SandstormEffect` | 暖色颗粒、扰动和低能见度 | [查看沙尘暴](/weather/sandstorm) |
+| 动态云层 | `CloudEffect` | 云量、高度、尺度和流速 | [查看动态云层](/weather/cloud) |
+| 雷雨闪电 | `RainEffect` | 细雨与程序化闪电组合 | [查看雷雨闪电](/weather/lightning) |
+
 ## 快速开始
 
 使用 `WeatherSystem` 管理一个活动天气效果。调用 `switch` 时，当前效果会先被销毁，因此不会产生重复叠加。
@@ -179,6 +190,6 @@ system.destroy()
 - 颜色支持 CSS 色值和带透明度的十六进制色值，例如 `#99b3ccff`。
 - Vue 组件应在 `onBeforeUnmount` 中调用 `destroy()`，避免路由切换后保留后处理阶段。
 
-天气实验室为每种效果提供可编辑代码。左侧展开代码面板后，可直接修改参数并使用 `Ctrl + Enter` 重新运行。
+天气实验室为每种效果提供可编辑代码。左侧展开代码面板后，可直接修改参数并使用 `Ctrl + Enter` 重新运行。六类案例统一采用低空斜视镜头，并保留地平线以上的天空区域，便于同时观察天气效果、空间纵深和地表底图。
 
 雨、雪、雾的着色器结构参考并扩展自 [Cesium-Examples weatherEffects.js](https://github.com/jiawanlong/Cesium-Examples/blob/main/examples/cesiumEx/weatherEffects.js)：保留屏幕空间雨线、多尺度雪层和深度雾的思路，同时适配 Cesium 1.118 的 WebGL 2 后处理语法，并将固定常量改为可更新的 uniform。

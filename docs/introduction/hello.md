@@ -14,9 +14,9 @@
 
   const cesiumRef = ref(null)
   const baseMapConfig = {
-    url: 'http://192.168.31.216:8095/file/terrain/jiutai/{z}/{x}/{reverseY}.jpg',
-    maximumLevel: 18,
-    minimumLevel: 3,
+    url: '/tiles/{z}/{x}/{reverseY}.png',
+    maximumLevel: 12,
+    minimumLevel: 1,
     themeColor: '#2f62af'
   }
   const mapConfig = {
@@ -62,9 +62,9 @@ import {BaseMaps, useCesium} from "b-map-viewer";
 import 'b-map-viewer/style.css'
 const {initCesium,setMapCenter} = useCesium()
 const baseMapConfig = {
-  url:'http://192.168.31.216:8095/file/terrain/jiutai/{z}/{x}/{reverseY}.jpg',
-  maximumLevel: 18,
-  minimumLevel:3,
+  url:'/tiles/{z}/{x}/{reverseY}.png',
+  maximumLevel: 12,
+  minimumLevel:1,
   themeColor:'#2f62af'
 }
 const mapConfig={

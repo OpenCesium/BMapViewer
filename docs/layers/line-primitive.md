@@ -1,8 +1,9 @@
 # LinePrimitiveLayer 高性能线图层
 
 `LinePrimitiveLayer` 类使用 Cesium 的 `Primitive` API 来渲染线几何体。相比 `PolylineCollection`，它在渲染大规模线数据时具有更好的性能和更低的内存占用。该图层通常用于需要极致渲染效率的场景。
-## 效果预览：
-![An image](/layer/line-primitive.gif)
+## 组件案例
+
+<LayerExamplePreview example="line-primitive" title="LinePrimitiveLayer 高性能线" />
 ## 构造函数
 
 `new LinePrimitiveLayer(viewer, config)`
@@ -61,8 +62,8 @@ primitiveLayer.setData([
         geometry: {
             type: 'LineString',
             coordinates: [
-                [116.40, 39.90],
-                [116.41, 39.91]
+                [125.834, 44.147],
+                [125.844, 44.157]
             ]
         },
         properties: {

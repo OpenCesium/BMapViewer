@@ -1,8 +1,9 @@
 # CircleExplosionLayer 圆爆炸扩散图层
 
 `PointRippleLayer` 类用于在 Cesium 中实现圆形爆炸扩散效果。该图层利用自定义材质和 `Entity` 的 `ellipse` 图形来实现类似冲击波向外扩散的动态视觉效果。
-## 效果预览：
-![An image](/layer/circle-explosion.gif)
+## 组件案例
+
+<LayerExamplePreview example="circle-explosion" title="CircleExplosionLayer 圆爆炸" />
 ## 构造函数
 
 `new CircleExplosionLayer(viewer, config)`
@@ -70,7 +71,7 @@ explosionLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.38, 39.92, 0]
+            coordinates: [125.833, 44.148, 0]
         },
         properties: {
             id: 'explosion-1',

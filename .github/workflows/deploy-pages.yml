@@ -46,6 +46,7 @@ jobs:
       - name: Build documentation site
         env:
           VITEPRESS_BASE: ${{ steps.pages.outputs.base_path }}/docs/
+          VITE_DEMO_BASE_URL: ${{ steps.pages.outputs.base_path }}/
         run: npm run docs:build
 
       - name: Assemble Pages site

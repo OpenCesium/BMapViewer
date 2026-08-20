@@ -1,8 +1,9 @@
 # CircleGroupLayer 圆形组图层
 
 `CircleGroupLayer` 类用于在 Cesium 中批量加载和管理圆形要素。它基于 `Cesium.CustomDataSource` 实现，利用 Entity API 的 `ellipse` 图形来绘制圆或椭圆，支持填充色、边框、拉伸高度以及不透明度等配置。
-## 效果预览：
-![An image](/layer/circle.gif)
+## 组件案例
+
+<LayerExamplePreview example="circle-group" title="CircleGroupLayer 圆图层" />
 ## 构造函数
 
 `new CircleGroupLayer(viewer, config)`
@@ -76,7 +77,7 @@ circleLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.40, 39.90]
+            coordinates: [125.834, 44.147]
         },
         properties: {
             id: 'circle-1',

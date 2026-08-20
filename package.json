@@ -55,13 +55,20 @@
     "vue": ">=3.4.0 <4"
   },
   "dependencies": {
-    "@zip.js/zip.js": "2.7.73",
     "@turf/turf": "^7.2.0",
+    "@zip.js/zip.js": "2.7.73",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@codemirror/commands": "^6.11.0",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.9",
+    "@lezer/highlight": "^1.2.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "cesium": "1.118.2",
+    "codemirror": "^6.0.2",
     "typescript": "^5.7.3",
     "vite": "^5.4.14",
     "vite-plugin-cesium": "^1.2.23",

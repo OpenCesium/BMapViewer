@@ -1,4 +1,5 @@
 import IconGroupLayer from "./IconGroupLayer.js";
+import IconClusterLayer from './IconClusterLayer.js'
 import LabelGroupLayer from "./LabelGroupLayer.js";
 import LineGroupLayer from "./LineGroupLayer.js";
 import LinePrimitiveLayer from "./LinePrimitiveLayer.js";
@@ -17,6 +18,7 @@ import RadarScanner3DLayer from "./RadarScanner3DLayer.js";
 
 export default {
     IconGroupLayer,
+    IconClusterLayer,
     LabelGroupLayer,
     LineGroupLayer,
     LinePrimitiveLayer,

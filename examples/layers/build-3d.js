@@ -10,6 +10,7 @@ export default {
 })
 
 const tileset = await layer.load()
+
 viewer.camera.flyToBoundingSphere(tileset.boundingSphere, {
   duration: 1.2,
   offset: new Cesium.HeadingPitchRange(

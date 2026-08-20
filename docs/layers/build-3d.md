@@ -1,8 +1,10 @@
 # Build3DLayer 3D楼宇图层
 
 `Build3DLayer` 类用于加载和管理 Cesium 的 3D Tileset 数据（通常为 3D 楼宇）。该图层支持自定义着色器（CustomShader）以实现动态扫光、高度渐变等视觉效果，并支持在加载过程中根据业务数据动态注入楼宇属性。
-## 效果预览：
-![An image](/layer/build-tiles.gif)
+## 组件案例
+
+<LayerExamplePreview example="build-3d" title="Build3DLayer 三维建筑" height="500px" />
+
 ## 构造函数
 
 `new Build3DLayer(viewer, config)`

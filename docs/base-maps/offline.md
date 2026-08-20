@@ -8,6 +8,10 @@ public/tiles/{z}/{x}/{reverseY}.png
 
 当前数据采用 TMS 行号，所以模板使用 Cesium 的 `{reverseY}`。瓦片坐标来自 GCJ-02 地图数据，配置 `coordinateSystem: 'GCJ02'` 后，`BaseMaps` 会自动应用 `GCJ02TilingScheme`，使 Cesium 的 WGS84 场景坐标与瓦片对齐。
 
+## 组件案例
+
+<SdkExamplePreview category="base-map" example="offline" title="BaseMap 本地离线瓦片" />
+
 ```js
 import { BaseMaps } from 'b-map-viewer'
 

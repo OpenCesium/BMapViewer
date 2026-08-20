@@ -1,8 +1,9 @@
 # HeatmapLayer 热力图图层
 
 `HeatmapLayer` 类用于在 Cesium 中渲染地理热力图。它通过在后台 Canvas 上绘制径向渐变并将其作为 `Rectangle` 实体的材质来实现。该图层支持自动计算数据边界，并能根据权重值动态映射颜色渐变。
-## 效果预览：
-![An image](/layer/heatmap.gif)
+## 组件案例
+
+<LayerExamplePreview example="heatmap" title="HeatmapLayer 热力图" />
 ## 构造函数
 
 `new HeatmapLayer(viewer, config)`
@@ -66,11 +67,11 @@ const heatmap = new MapLayers.HeatmapLayer(viewer, {
 // 2. 加载点位数据
 heatmap.setData([
     {
-        geometry: { type: 'Point', coordinates: [116.40, 39.90] },
+        geometry: { type: 'Point', coordinates: [125.834, 44.147] },
         properties: { value: 80 }
     },
     {
-        geometry: { type: 'Point', coordinates: [116.41, 39.91] },
+        geometry: { type: 'Point', coordinates: [125.844, 44.157] },
         properties: { value: 50 }
     }
 ]);

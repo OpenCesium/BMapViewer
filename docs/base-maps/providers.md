@@ -14,6 +14,16 @@
 | `google` | `GoogleImageryProvider` | `style: 'roadmap' | 'satellite' | 'terrain' | 'hybrid'`、`key`、`sessionToken` |
 | `geovis` | `GeoVisImageryProvider` | `style`、`format`、`key` |
 
+## 可运行组件案例
+
+- [高德地图](/base-maps/amap)
+- [百度地图](/base-maps/baidu)
+- [腾讯地图](/base-maps/tencent)
+- [ArcGIS 全球影像](/base-maps/arcgis)
+- [Google 地图](/base-maps/google)
+
+每个页面都直接运行对应 Provider。天地图和星图地球需要开发者 Key，因此仅提供配置说明，不在公开页面中暴露凭证。
+
 ### 高德地图
 
 ```js

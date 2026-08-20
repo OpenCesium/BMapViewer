@@ -17,6 +17,20 @@ import { BaseMaps } from 'b-map-viewer'
 | 自定义切片 | `CustomGeographicTilingScheme`、`CustomMercatorTilingScheme` |
 | 百度投影 | `BD09Projection` |
 
+## 组件案例目录
+
+| 底图 | 实现方式 | 文档与实时案例 |
+| --- | --- | --- |
+| 本地离线瓦片 | `BaseMap / offline` | [查看离线瓦片](/base-maps/offline) |
+| 自定义 Provider | `createImageryProvider` | [查看自定义 Provider](/base-maps/custom-provider) |
+| 高德地图 | `AMapImageryProvider` | [查看高德地图](/base-maps/amap) |
+| 百度地图 | `BaiduImageryProvider` | [查看百度地图](/base-maps/baidu) |
+| 腾讯地图 | `TencentImageryProvider` | [查看腾讯地图](/base-maps/tencent) |
+| ArcGIS 全球影像 | `ArcGISImageryProvider` | [查看 ArcGIS](/base-maps/arcgis) |
+| Google 地图 | `GoogleImageryProvider` | [查看 Google 地图](/base-maps/google) |
+
+天地图和星图地球需要开发者凭证，配置方式见 [多源 Provider](/base-maps/providers)。公开文档不会嵌入访问 Key。
+
 ## BaseMap
 
 `new BaseMaps.BaseMap(viewer, config)` 创建并立即加载一个底图。实例只管理自身创建的影像资源，页面销毁时调用 `destroy()` 即可。

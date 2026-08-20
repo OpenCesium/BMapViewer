@@ -6,7 +6,7 @@ BMapViewer内置了turf地理空间分析工具库，方便开发者进行地理
 ```js
 import { turf } from "b-map-viewer";
 
-turf.point([116.400219, 39.898231])
+turf.point([125.8337, 44.1471])
 
 
 ```

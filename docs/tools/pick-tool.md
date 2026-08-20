@@ -4,6 +4,15 @@
 
 示例站提供独立的拾取工作台。进入示例主页后选择“拾取与绘制工具”，可以切换四种模式、编辑代码并查看实时坐标回调。
 
+## 拾取案例目录
+
+| 能力 | 方法 | 交互方式 | 文档与实时案例 |
+| --- | --- | --- | --- |
+| 点拾取 | `pickPoint` | 单击确定点位，保留后可拖拽 | [查看点拾取](/tools/pick-point) |
+| 图标点拾取 | `pickPointIcon` | 单击放置图标，保留后可拖拽 | [查看图标点拾取](/tools/pick-icon) |
+| 线绘制 | `pickLine` | 单击添加折点，双击结束 | [查看线绘制](/tools/pick-line) |
+| 多边形绘制 | `pickPolygon` | 单击添加顶点，双击闭合 | [查看多边形绘制](/tools/pick-polygon) |
+
 ## 构造函数
 
 `new PickTools(viewer, config)`
@@ -37,12 +46,8 @@
   - `data`: (Array, 可选)。初始坐标，若传入则直接进入编辑模式。
 - 描述：在地图上点击以拾取一个点。如果 `isReserve` 为真，绘制后允许拖拽点位进行编辑。
 
-![An image](/pick/point.gif)
-
 ## pickPointIcon(callback, data) 图标点绘制
 - 描述：逻辑同 `pickPoint`，但渲染为 Billboard 图标。
-
-![An image](/pick/icon.gif)
 
 ## pickLine(callback, data) 线绘制
 - 参数：
@@ -50,18 +55,13 @@
   - `data`: (Array, 可选)。初始点位数组，若传入则直接进入编辑模式。
 - 交互：左键点击添加点，**双击**结束绘制。
 - 描述：绘制折线。绘图过程中会有虚线跟随鼠标，若 `isReserve` 为真，结束绘制后可通过拖拽折点进行修改。
-![An image](/pick/line.gif)
 
 ## pickPolygon(callback, data) 多边形绘制
 - 交互：左键点击添加点，**双击**自动闭合并结束绘制。
 - 描述：绘制多边形面。支持实时填充预览。
 
-![An image](/pick/poly.gif)
-
 ### clear()
 - 描述：清空场景中由该工具创建的所有实体。
-
-![An image](/pick/clear.gif)
 
 ### destroy()
 - 描述：移除鼠标监听器并清理临时标签。

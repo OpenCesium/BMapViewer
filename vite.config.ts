@@ -11,8 +11,12 @@ export default defineConfig({
       '@sdk': fileURLToPath(new URL('./src/sdk', import.meta.url)),
     },
   },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+  },
   build: {
     outDir: 'demo-dist',
   },
 })
-

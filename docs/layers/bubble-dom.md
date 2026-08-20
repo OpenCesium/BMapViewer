@@ -1,8 +1,9 @@
 # BubbleLayer 广告牌图层(DOM) 
 
 `BubbleLayer` 类用于在 Cesium 中管理基于 DOM 元素的地图弹窗（Popup）。与基于 Canvas 的 `BubbleGroupLayer` 不同，该图层直接将 HTML 元素挂载在地图容器之上，适合由于样式复杂、需要交互（如输入框、按钮）或需要利用 CSS 动画的场景；可以展示复杂内容，由于该图层的原理是构建dom节点，所以不建议用于大量弹窗展示，避免构建大量dom节点导致性能问题。
-## 效果预览：
-![An image](/layer/bubble-dom.gif)
+## 组件案例
+
+<LayerExamplePreview example="bubble-dom" title="BubbleLayer DOM 信息窗" />
 ## 构造函数
 
 `new BubbleLayer(viewer, option)`
@@ -174,7 +175,7 @@ const popupLayer = new MapLayers.BubbleLayer(viewer, {
 
 // 2. 加载单个弹窗
 popupLayer.addLayer({
-    geometry: { coordinates: [116.40, 39.90] },
+    geometry: { coordinates: [125.834, 44.147] },
     content: {
         header: '实时监控',
         body: '<p>设备状态：正常</p>'
@@ -185,7 +186,7 @@ popupLayer.addLayer({
 // 3. 批量加载
 popupLayer.setData([
     {
-        geometry: { coordinates: [116.41, 39.91] },
+        geometry: { coordinates: [125.844, 44.157] },
         content: { header: '点位 A', body: '数据 A' }
     }
 ]);

@@ -1,14 +1,16 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
+import * as Cesium from 'cesium'
 import { BaseMaps, BMapViewer, WeatherEffects } from '../src/sdk/index.js'
+import CodeExampleEditor from './CodeExampleEditor.vue'
 import { weatherExamples } from './weather/index.js'
 import { exampleModules } from './modules.js'
 
 const HOME_CAMERA = {
   longitude: 125.83372000975274,
   latitude: 44.14712267403385,
-  height: 7600,
-  pitch: -56,
+  height: 4200,
+  pitch:-5,
   minHeight: 40,
   maxHeight: 800000,
 }
@@ -17,8 +19,6 @@ const weatherDocs = exampleModules.find((module) => module.id === 'weather')?.do
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 
 const mapRef = ref(null)
-const editorRef = ref(null)
-const lineNumbersRef = ref(null)
 const activeId = ref(weatherExamples[0].id)
 const code = ref(weatherExamples[0].codeText)
 const isCodePanelOpen = ref(false)
@@ -36,7 +36,6 @@ let runVersion = 0
 let resizeTimer = null
 
 const activeExample = computed(() => weatherExamples.find((item) => item.id === activeId.value) || weatherExamples[0])
-const lineNumbers = computed(() => Array.from({ length: Math.max(1, code.value.split('\n').length) }, (_, index) => index + 1))
 const isModified = computed(() => code.value !== activeExample.value.codeText)
 const statusLabel = computed(() => ({
   idle: '待运行',
@@ -146,31 +145,10 @@ function resetCode() {
   runMessage.value = '已恢复默认示例代码'
 }
 
-function syncEditorScroll() {
-  if (lineNumbersRef.value && editorRef.value) {
-    lineNumbersRef.value.scrollTop = editorRef.value.scrollTop
-  }
-}
-
-function handleEditorKeydown(event) {
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-    event.preventDefault()
-    runCode()
-    return
-  }
-  if (event.key === 'Tab') {
-    event.preventDefault()
-    const start = event.target.selectionStart
-    const end = event.target.selectionEnd
-    code.value = `${code.value.slice(0, start)}  ${code.value.slice(end)}`
-    nextTick(() => {
-      event.target.selectionStart = event.target.selectionEnd = start + 2
-    })
-  }
-}
-
 async function handleViewerReady(readyViewer) {
   viewer = readyViewer
+  viewer.scene.skyAtmosphere.show = true
+  viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#8499a6')
   baseMap = new BaseMaps.BaseMap(viewer, {
     type: 'arcgis',
     url: BaseMaps.arcgisWorldImageryUrl,
@@ -263,15 +241,12 @@ onBeforeUnmount(() => {
           <div class="parameter-line"><span>可调参数</span><code v-for="parameter in activeExample.parameters" :key="parameter">{{ parameter }}</code></div>
           <div class="scope-line"><span>可用变量</span><code>WeatherEffects</code><code>viewer</code></div>
           <div class="editor-shell">
-            <pre ref="lineNumbersRef" aria-hidden="true">{{ lineNumbers.join('\n') }}</pre>
-            <textarea
-              ref="editorRef"
+            <CodeExampleEditor
               v-model="code"
-              spellcheck="false"
+              accent="amber"
               aria-label="可编辑天气 JavaScript 示例代码"
-              @scroll="syncEditorScroll"
-              @keydown="handleEditorKeydown"
-            ></textarea>
+              @run="runCode"
+            />
           </div>
           <div class="run-status" :class="runState"><span><i></i>{{ runMessage }}</span><time v-if="runDuration !== null">{{ runDuration }} ms</time></div>
           <div class="code-actions">
@@ -364,9 +339,7 @@ onBeforeUnmount(() => {
 .parameter-line span, .scope-line span { flex: 0 0 auto; margin-right: 4px; color: #586b70; font-size: 8px; }
 .parameter-line code, .scope-line code { padding: 2px 5px; color: #b8a06c; background: #1c201d; font: 8px "Cascadia Code", monospace; }
 .scope-line code { color: #79a9ad; background: #0c2025; }
-.editor-shell { min-height: 0; display: grid; grid-template-columns: 42px 1fr; border: 1px solid #26373d; background: #040b0f; }
-.editor-shell pre { margin: 0; padding: 12px 9px; overflow: hidden; border-right: 1px solid #25343a; color: #516267; text-align: right; font: 10px/1.65 "Cascadia Code", monospace; user-select: none; }
-.editor-shell textarea { min-width: 0; padding: 12px 13px; resize: none; border: 0; outline: 0; color: #e1ebe8; background: transparent; caret-color: var(--amber); font: 10px/1.65 "Cascadia Code", Consolas, monospace; white-space: pre; tab-size: 2; }
+.editor-shell { min-height: 0; overflow: hidden; border: 1px solid #26373d; background: #040b0f; }
 .run-status { min-height: 37px; padding: 0 11px; display: flex; align-items: center; justify-content: space-between; gap: 9px; color: #82989b; background: #0e1c20; font: 9px "Cascadia Code", monospace; }
 .run-status > span { min-width: 0; display: flex; align-items: center; gap: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .run-status time { flex: 0 0 auto; color: #607479; }
@@ -386,7 +359,7 @@ onBeforeUnmount(() => {
 .weather-scale b { margin-left: 6px; font: 8px "Cascadia Code", monospace; letter-spacing: .1em; }
 .map-guide { position: absolute; z-index: 2; right: 20px; bottom: 34px; left: 20px; padding: 12px; color: #9aacab; background: rgba(8, 17, 21, .88); border-left: 2px solid var(--amber); font-size: 9px; pointer-events: none; }
 .map-footer { position: absolute; z-index: 2; right: 15px; bottom: 10px; left: 15px; display: flex; justify-content: space-between; color: #667d80; font: 8px "Cascadia Code", monospace; pointer-events: none; }
-button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
 @keyframes status-pulse { to { opacity: .32; box-shadow: 0 0 13px var(--amber); } }
 @media (max-width: 1080px) { .header-metrics > div:nth-child(2), .header-metrics > div:nth-child(3) { display: none; } }
 @media (max-width: 900px) { .lab-grid { grid-template-columns: 190px 44px minmax(540px, 1fr); } .lab-grid.code-panel-open { grid-template-columns: 190px 440px minmax(540px, 1fr); } .code-body { min-width: 396px; } }

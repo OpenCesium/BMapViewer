@@ -23,7 +23,7 @@ const provider = BaseMaps.createImageryProvider({
 ## 坐标转换
 
 ```js
-const gcj02 = BaseMaps.CoordTransform.WGS84ToGCJ02(116.3974, 39.9093)
+const gcj02 = BaseMaps.CoordTransform.WGS84ToGCJ02(125.8337, 44.1471)
 const bd09 = BaseMaps.CoordTransform.GCJ02ToBD09(gcj02[0], gcj02[1])
 const wgs84 = BaseMaps.CoordTransform.GCJ02ToWGS84(gcj02[0], gcj02[1])
 ```

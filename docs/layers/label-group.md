@@ -1,8 +1,9 @@
 # LabelGroupLayer 文字标签组图层
 
 `LabelGroupLayer` 类用于在 Cesium 中高效管理和显示批量文字标签。它基于 `Cesium.LabelCollection` 实现，利用 Primitive API 渲染文字，相比于 Entity API，在处理成千上万个标签时具有显著的性能优势。
-## 效果预览：
-![An image](/layer/label.gif)
+## 组件案例
+
+<LayerExamplePreview example="label-group" title="LabelGroupLayer 文字标注" />
 
 ## 构造函数
 
@@ -74,7 +75,7 @@ labelLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.39, 39.91]
+            coordinates: [125.834, 44.151]
         },
         properties: {
             id: 'label-1',

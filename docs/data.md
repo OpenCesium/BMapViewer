@@ -13,7 +13,7 @@ outline: deep
 [{
     geometry: {
         type: 'Point',
-        coordinates: [116.400219, 39.898231]
+        coordinates: [125.8337, 44.1471]
     },
     properties: {
         id: 1,
@@ -29,7 +29,7 @@ outline: deep
     geometry: {
         type: 'LineString',
         coordinates: [
-            [116.400219, 39.898231],
+            [125.8337, 44.1471],
             [121.473701, 31.230401]
         ]
     },
@@ -48,10 +48,10 @@ outline: deep
         type: 'Polygon',
         coordinates: [
             [
-                [116.35, 39.95],
-                [116.45, 39.95],
-                [116.45, 39.85],
-                [116.35, 39.85],
+                [125.80, 44.17],
+                [125.87, 44.17],
+                [125.87, 44.11],
+                [125.80, 44.11],
             ]
         ]
     },
@@ -78,7 +78,7 @@ iconGroup.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.400219, 39.898231]
+            coordinates: [125.8337, 44.1471]
         },
         properties: {
             id: 1,

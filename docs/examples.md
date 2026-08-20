@@ -7,8 +7,8 @@
 - **底图目录**：单独展示离线瓦片、多源地图 Provider、坐标纠偏和自定义切片方案。
 - **图层目录**：按点位标注、线面图层、三维场景、动态效果和专题分析分类展示业务图层。
 - **天气目录**：展示雨、雪、雾、沙尘、云层和闪电六类后处理效果。
-- **代码轨道**：默认折叠在目录右侧；点击 `›` 展开代码，支持直接编辑，点击 `‹` 可再次收起。
-- **运行控制**：按 `Ctrl + Enter` 或点击“运行当前示例”即可重新执行代码。
+- **代码轨道**：默认折叠在目录右侧；点击 `›` 展开 CodeMirror 6 编辑器，提供 JavaScript 语法高亮、行号、代码折叠、括号匹配、搜索和撤销重做，点击 `‹` 可再次收起。
+- **运行控制**：按 `Ctrl/Cmd + Enter` 或点击“运行当前示例”即可重新执行代码；切换案例或恢复默认代码时，编辑器内容会同步更新。
 - **地图预览**：持续显示 Cesium 运行结果、执行状态、耗时和地图坐标。
 
 每次切换或重新运行示例时，工作台会清理上一次示例创建的 Entity、DataSource、Primitive、ImageryLayer 和 DOM 资源，避免重复叠加。
@@ -31,7 +31,7 @@ public/tiles/{z}/{x}/{reverseY}.png
 
 | 分类 | 示例模块 |
 | --- | --- |
-| 点位标注 | `IconGroupLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
+| 点位标注 | `IconGroupLayer`、`IconClusterLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
 | 线面图层 | `LineGroupLayer`、`LinePrimitiveLayer`、`PolygonPrimitiveLayer`、`LineMaterialLayer` |
 | 三维场景 | `Build3DLayer`、`RadarScanner3DLayer` |
 | 动态效果 | `CircleGroupLayer`、`CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |

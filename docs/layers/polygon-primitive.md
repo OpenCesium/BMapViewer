@@ -1,8 +1,9 @@
 # PolygonPrimitiveLayer 高性能面图层
 
 `PolygonPrimitiveLayer` 类使用 Cesium 的 `Primitive` API 来渲染多边形面几何体（Polygon/MultiPolygon）。相比 Entity API，它在渲染大量面数据时性能更优，且内置了自动描边功能。
-## 效果预览：
-![An image](/layer/polygon-primitive.gif)
+## 组件案例
+
+<LayerExamplePreview example="polygon-primitive" title="PolygonPrimitiveLayer 高性能面" />
 ## 构造函数
 
 `new PolygonPrimitiveLayer(viewer, config)`
@@ -64,11 +65,11 @@ polygonLayer.setData([
             type: 'Polygon',
             coordinates: [
                 [
-                    [116.35, 39.95],
-                    [116.45, 39.95],
-                    [116.45, 39.85],
-                    [116.35, 39.85],
-                    [116.35, 39.95]
+                    [125.80, 44.17],
+                    [125.87, 44.17],
+                    [125.87, 44.11],
+                    [125.80, 44.11],
+                    [125.80, 44.17]
                 ]
             ]
         },

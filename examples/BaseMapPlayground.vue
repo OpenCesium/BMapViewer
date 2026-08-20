@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { BaseMaps, BMapViewer } from '../src/sdk/index.js'
+import CodeExampleEditor from './CodeExampleEditor.vue'
 import { baseMapExamples, baseMapGroups } from './base-maps/index.js'
 
 const HOME_CAMERA = {
@@ -17,8 +18,6 @@ const tileUrl = new URL('tiles/{z}/{x}/{reverseY}.png', publicRoot).href
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 
 const mapRef = ref(null)
-const editorRef = ref(null)
-const lineNumbersRef = ref(null)
 const activeId = ref(baseMapExamples[0].id)
 const code = ref(baseMapExamples[0].code)
 const isCodePanelOpen = ref(false)
@@ -38,7 +37,6 @@ const groupedExamples = computed(() => baseMapGroups.map((group) => ({
   group,
   items: baseMapExamples.filter((item) => item.group === group),
 })))
-const lineNumbers = computed(() => Array.from({ length: Math.max(1, code.value.split('\n').length) }, (_, index) => index + 1))
 const isModified = computed(() => code.value !== activeExample.value.code)
 const statusLabel = computed(() => ({
   idle: '待运行',
@@ -137,29 +135,6 @@ function resetCode() {
   runMessage.value = '已恢复默认示例代码'
 }
 
-function syncEditorScroll() {
-  if (lineNumbersRef.value && editorRef.value) {
-    lineNumbersRef.value.scrollTop = editorRef.value.scrollTop
-  }
-}
-
-function handleEditorKeydown(event) {
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-    event.preventDefault()
-    runCode()
-    return
-  }
-  if (event.key === 'Tab') {
-    event.preventDefault()
-    const start = event.target.selectionStart
-    const end = event.target.selectionEnd
-    code.value = `${code.value.slice(0, start)}  ${code.value.slice(end)}`
-    nextTick(() => {
-      event.target.selectionStart = event.target.selectionEnd = start + 2
-    })
-  }
-}
-
 async function handleViewerReady(readyViewer) {
   viewer = readyViewer
   viewerReady.value = true
@@ -242,15 +217,12 @@ onBeforeUnmount(() => {
           <p>{{ activeExample.summary }}</p>
           <div class="scope-line"><span>可用变量</span><code>BaseMaps</code><code>viewer</code><code>tileUrl</code></div>
           <div class="editor-shell">
-            <pre ref="lineNumbersRef" aria-hidden="true">{{ lineNumbers.join('\n') }}</pre>
-            <textarea
-              ref="editorRef"
+            <CodeExampleEditor
               v-model="code"
-              spellcheck="false"
+              accent="cyan"
               aria-label="可编辑底图 JavaScript 示例代码"
-              @scroll="syncEditorScroll"
-              @keydown="handleEditorKeydown"
-            ></textarea>
+              @run="runCode"
+            />
           </div>
           <div class="run-status" :class="runState"><span><i></i>{{ runMessage }}</span><time v-if="runDuration">{{ runDuration }} ms</time></div>
           <div class="code-actions">
@@ -327,9 +299,7 @@ onBeforeUnmount(() => {
 .scope-line { display: flex; align-items: center; gap: 5px; overflow: hidden; }
 .scope-line span { margin-right: 4px; color: #4d6b76; font-size: 8px; }
 .scope-line code { padding: 2px 5px; color: #76b8bd; background: #0c202a; font: 8px "Cascadia Code", monospace; }
-.editor-shell { min-height: 0; display: grid; grid-template-columns: 42px 1fr; border: 1px solid #183542; background: #030c12; }
-.editor-shell pre { margin: 0; padding: 12px 9px; overflow: hidden; border-right: 1px solid #17313b; color: #3f6570; text-align: right; font: 10px/1.65 "Cascadia Code", monospace; user-select: none; }
-.editor-shell textarea { min-width: 0; padding: 12px 13px; resize: none; border: 0; outline: 0; color: #d7f5f2; background: transparent; caret-color: var(--cyan); font: 10px/1.65 "Cascadia Code", Consolas, monospace; white-space: pre; tab-size: 2; }
+.editor-shell { min-height: 0; overflow: hidden; border: 1px solid #183542; background: #030c12; }
 .run-status { min-height: 37px; padding: 0 11px; display: flex; align-items: center; justify-content: space-between; gap: 9px; color: #79a0a7; background: #091b24; font: 9px "Cascadia Code", monospace; }
 .run-status > span { min-width: 0; display: flex; align-items: center; gap: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .run-status time { flex: 0 0 auto; color: #4e7079; }
@@ -344,7 +314,7 @@ onBeforeUnmount(() => {
 .map-title strong { font-size: 16px; font-weight: 500; }
 .map-guide { position: absolute; z-index: 2; right: 20px; bottom: 34px; left: 20px; padding: 12px; color: #8fb4ba; background: rgba(5, 24, 35, .88); border-left: 2px solid #58c7ff; font-size: 9px; pointer-events: none; }
 .map-footer { position: absolute; z-index: 2; right: 15px; bottom: 10px; left: 15px; display: flex; justify-content: space-between; color: #5e8790; font: 8px "Cascadia Code", monospace; pointer-events: none; }
-button:focus-visible, textarea:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
+button:focus-visible { outline: 2px solid var(--cyan); outline-offset: -2px; }
 @media (max-width: 900px) { .header-metrics > div:nth-child(2) { display: none; } .lab-grid { grid-template-columns: 190px 44px minmax(540px, 1fr); } .lab-grid.code-panel-open { grid-template-columns: 190px 430px minmax(540px, 1fr); } .code-body { min-width: 386px; } }
 @media (prefers-reduced-motion: reduce) { .lab-grid, .code-body, .code-toggle span { transition: none; } }
 </style>

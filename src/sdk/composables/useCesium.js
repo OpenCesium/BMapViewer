@@ -101,8 +101,8 @@ export function useCesium() {
     }
     const setMapCenter = (config) =>{
         let {
-            longitude=116.40021930621751,
-            latitude = 39.89823173640466,
+            longitude=125.83372000975274,
+            latitude = 44.14712267403385,
             height=10000,
             pitch = 0
         } = config

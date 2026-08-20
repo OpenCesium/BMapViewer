@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import * as Cesium from 'cesium'
 import { BaseMaps, BMapViewer, MapLayers } from '../src/sdk/index.js'
+import CodeExampleEditor from './CodeExampleEditor.vue'
 import { layerExamples, layerGroups } from './layers/index.js'
 
 const HOME_CAMERA = {
@@ -19,8 +20,6 @@ const buildingTilesetUrl = new URL('3d-tiles/tileset.json', publicRoot).href
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 
 const mapRef = ref(null)
-const editorRef = ref(null)
-const lineNumbersRef = ref(null)
 const viewerReady = ref(false)
 const isCodePanelOpen = ref(false)
 const activeId = ref(layerExamples[0].id)
@@ -41,7 +40,6 @@ const groupedExamples = computed(() => layerGroups.map((group) => ({
   group,
   items: layerExamples.filter((item) => item.group === group),
 })))
-const lineNumbers = computed(() => Array.from({ length: Math.max(1, code.value.split('\n').length) }, (_, index) => index + 1))
 const isModified = computed(() => code.value !== activeExample.value.code)
 const statusLabel = computed(() => ({
   idle: '待运行',
@@ -221,28 +219,6 @@ function resetCode() {
   runMessage.value = '已恢复默认示例代码'
 }
 
-function syncEditorScroll(event) {
-  if (lineNumbersRef.value) lineNumbersRef.value.scrollTop = event.target.scrollTop
-}
-
-function handleEditorKeydown(event) {
-  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-    event.preventDefault()
-    runCode()
-  }
-
-  if (event.key === 'Tab') {
-    event.preventDefault()
-    const target = event.target
-    const start = target.selectionStart
-    const end = target.selectionEnd
-    code.value = `${code.value.slice(0, start)}  ${code.value.slice(end)}`
-    nextTick(() => {
-      target.selectionStart = target.selectionEnd = start + 2
-    })
-  }
-}
-
 async function handleViewerReady(readyViewer) {
   viewer = readyViewer
   viewerReady.value = true
@@ -368,19 +344,12 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="editor-shell">
-            <div ref="lineNumbersRef" class="line-numbers" aria-hidden="true">
-              <span v-for="line in lineNumbers" :key="line">{{ line }}</span>
-            </div>
-            <textarea
-              ref="editorRef"
+            <CodeExampleEditor
               v-model="code"
-              class="code-editor"
+              accent="cyan"
               aria-label="可编辑 JavaScript 示例代码"
-              spellcheck="false"
-              autocomplete="off"
-              @scroll="syncEditorScroll"
-              @keydown="handleEditorKeydown"
-            ></textarea>
+              @run="runCode"
+            />
           </div>
 
           <div class="run-console" :class="runState">
@@ -555,11 +524,7 @@ onBeforeUnmount(() => {
 .scope-line span { margin-right: 4px; color: #4d6b76; font-size: 9px; }
 .scope-line code { padding: 2px 5px; color: #76b8bd; background: #0c202a; font: 9px "Cascadia Code", monospace; }
 
-.editor-shell { min-height: 220px; flex: 1; display: grid; grid-template-columns: 42px 1fr; overflow: hidden; border: 1px solid #16303a; background: #050d13; box-shadow: inset 0 1px 18px rgba(0, 0, 0, 0.25); }
-.line-numbers { padding: 13px 0 24px; overflow: hidden; border-right: 1px solid #122731; color: #34505c; background: #071018; font: 11px/1.65 "Cascadia Code", monospace; text-align: right; user-select: none; }
-.line-numbers span { display: block; padding-right: 10px; }
-.code-editor { width: 100%; height: 100%; padding: 13px 14px 24px; resize: none; border: 0; outline: 0; color: #bde5e2; caret-color: var(--cyan); background: transparent; font: 11px/1.65 "Cascadia Code", "SFMono-Regular", Consolas, monospace; tab-size: 2; white-space: pre; }
-.code-editor::selection { color: white; background: #176a73; }
+.editor-shell { min-height: 220px; flex: 1; overflow: hidden; border: 1px solid #16303a; background: #050d13; box-shadow: inset 0 1px 18px rgba(0, 0, 0, 0.25); }
 
 .run-console { min-height: 38px; margin-top: 10px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-left: 2px solid #29424c; color: #73909a; background: #091821; font: 10px/1.4 "Cascadia Code", monospace; }
 .run-console.success { border-left-color: var(--cyan); color: #98d7d4; }

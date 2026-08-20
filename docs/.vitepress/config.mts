@@ -53,6 +53,12 @@ export default defineConfig({
         items: [
           { text: '底图模块总览', link: '/base-maps' },
           { text: '离线瓦片', link: '/base-maps/offline' },
+          { text: '自定义 Provider', link: '/base-maps/custom-provider' },
+          { text: '高德地图', link: '/base-maps/amap' },
+          { text: '百度地图', link: '/base-maps/baidu' },
+          { text: '腾讯地图', link: '/base-maps/tencent' },
+          { text: 'ArcGIS 全球影像', link: '/base-maps/arcgis' },
+          { text: 'Google 地图', link: '/base-maps/google' },
           { text: '多源 Provider', link: '/base-maps/providers' },
           { text: '坐标系与自定义切片', link: '/base-maps/tiling-schemes' },
         ],
@@ -62,6 +68,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'IconGroupLayer 图标', link: '/layers/icon-group' },
+          { text: 'IconClusterLayer 图标聚合', link: '/layers/icon-cluster' },
           { text: 'LabelGroupLayer 文字', link: '/layers/label-group' },
           { text: 'BubbleGroupLayer 气泡', link: '/layers/bubble-group' },
           { text: 'BubbleLayer DOM 广告牌', link: '/layers/bubble-dom' },
@@ -81,7 +88,11 @@ export default defineConfig({
       {
         text: '工具',
         items: [
-          { text: 'PickTools 鼠标拾取', link: '/tools/pick-tool' },
+          { text: 'PickTools 拾取总览', link: '/tools/pick-tool' },
+          { text: 'pickPoint 点拾取', link: '/tools/pick-point' },
+          { text: 'pickPointIcon 图标点', link: '/tools/pick-icon' },
+          { text: 'pickLine 线绘制', link: '/tools/pick-line' },
+          { text: 'pickPolygon 多边形', link: '/tools/pick-polygon' },
           { text: 'Turf 空间分析', link: '/tools/turf' },
         ],
       },
@@ -90,6 +101,12 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: '天气系统总览', link: '/weather' },
+          { text: 'RainEffect 降雨', link: '/weather/rain' },
+          { text: 'SnowEffect 降雪', link: '/weather/snow' },
+          { text: 'FogEffect 距离雾', link: '/weather/fog' },
+          { text: 'SandstormEffect 沙尘暴', link: '/weather/sandstorm' },
+          { text: 'CloudEffect 动态云层', link: '/weather/cloud' },
+          { text: 'RainEffect 雷雨闪电', link: '/weather/lightning' },
         ],
       },
     ],

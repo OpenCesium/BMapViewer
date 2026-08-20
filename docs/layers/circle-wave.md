@@ -1,8 +1,9 @@
 # CircleWaveLayer 水波纹扩散图层
 
 `CircleWaveLayer` 类用于在 Cesium 中实现连续的水波纹扩散效果。该图层利用自定义材质和 `Entity` 的 `ellipse` 图形来实现类似水面波纹逐层向外扩散的动态视觉效果，支持配置波纹数量和颜色。
-## 效果预览：
-![An image](/layer/circle-wave.gif)
+## 组件案例
+
+<LayerExamplePreview example="circle-wave" title="CircleWaveLayer 水波纹" />
 ## 构造函数
 
 `new CircleWaveLayer(viewer, config)`
@@ -70,7 +71,7 @@ waveLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.40, 39.90, 0]
+            coordinates: [125.834, 44.147, 0]
         },
         properties: {
             id: 'wave-1',

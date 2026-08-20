@@ -5,16 +5,26 @@ import { findExampleModule, projectLinks } from '../examples/modules.js'
 
 const routeComponents = {
   'base-maps': defineAsyncComponent(() => import('../examples/BaseMapPlayground.vue')),
+  'base-map-preview': defineAsyncComponent(() => import('../examples/BaseMapCasePreview.vue')),
   layers: defineAsyncComponent(() => import('../examples/LayerPlayground.vue')),
+  'layer-preview': defineAsyncComponent(() => import('../examples/LayerCasePreview.vue')),
+  'pick-preview': defineAsyncComponent(() => import('../examples/PickCasePreview.vue')),
+  'weather-preview': defineAsyncComponent(() => import('../examples/WeatherCasePreview.vue')),
   'pick-tools': defineAsyncComponent(() => import('../examples/PickToolsPlayground.vue')),
   weather: defineAsyncComponent(() => import('../examples/WeatherCatalog.vue')),
 }
+
+const previewRoutes = new Set(['base-map-preview', 'layer-preview', 'pick-preview', 'weather-preview'])
 
 const currentRoute = ref(readRoute())
 const currentModule = computed(() => findExampleModule(currentRoute.value))
 const currentComponent = computed(() => routeComponents[currentRoute.value])
 
 function readRoute() {
+  if (new URLSearchParams(window.location.search).has('base-map-preview')) return 'base-map-preview'
+  if (new URLSearchParams(window.location.search).has('layer-preview')) return 'layer-preview'
+  if (new URLSearchParams(window.location.search).has('pick-preview')) return 'pick-preview'
+  if (new URLSearchParams(window.location.search).has('weather-preview')) return 'weather-preview'
   return window.location.hash.replace(/^#\/?/, '').split('/')[0] || 'home'
 }
 
@@ -40,6 +50,8 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
 
 <template>
   <BasicExample v-if="currentRoute === 'home'" @navigate="navigate" />
+
+  <component :is="currentComponent" v-else-if="previewRoutes.has(currentRoute)" />
 
   <div v-else class="module-shell">
     <header class="module-bar">

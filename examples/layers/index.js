@@ -1,4 +1,5 @@
 import iconGroup from './icon-group.js'
+import iconCluster from './icon-cluster.js'
 import labelGroup from './label-group.js'
 import lineGroup from './line-group.js'
 import linePrimitive from './line-primitive.js'
@@ -17,6 +18,7 @@ import radarScanner3d from './radar-scanner-3d.js'
 
 export const layerExamples = [
   iconGroup,
+  iconCluster,
   labelGroup,
   lineGroup,
   linePrimitive,

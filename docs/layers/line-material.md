@@ -1,8 +1,9 @@
 # LineMaterialLayer 高性能材质线图层
 
 `LineMaterialLayer` 类利用 Cesium 的 `Primitive` API 和 `PolylineMaterialAppearance` 来加载具有复杂材质效果的高性能线图层。相比 `LineGroupLayer`，它在渲染大量线几何体时具有更优的性能表现。
-## 效果预览：
-![An image](/layer/line-material.gif)
+## 组件案例
+
+<LayerExamplePreview example="line-material" title="LineMaterialLayer 材质线" />
 ## 构造函数
 
 `new LineMaterialLayer(viewer, config)`

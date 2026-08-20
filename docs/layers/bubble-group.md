@@ -1,8 +1,9 @@
 # BubbleGroupLayer 气泡组图层
 
 `BubbleGroupLayer` 类用于在 Cesium 中批量管理和显示动态气泡（Popup/Tooltip 风格的标签）。它基于 `Cesium.BillboardCollection` 实现，支持复杂的**碰撞检测**、**遮挡自动隐藏**以及**自定义可视区域**过滤。
-## 效果预览：
-![An image](/layer/bubble.gif)
+## 组件案例
+
+<LayerExamplePreview example="bubble-group" title="BubbleGroupLayer Canvas 气泡" />
 ## 构造函数
 
 `new BubbleGroupLayer(viewer, config)`
@@ -88,7 +89,7 @@ bubbleLayer.setData([
     {
         geometry: {
             type: 'Point',
-            coordinates: [116.40, 39.90]
+            coordinates: [125.834, 44.147]
         },
         properties: {
             id: 'bubble-1',

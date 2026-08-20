@@ -1,8 +1,9 @@
 # LineGroupLayer 线组图层
 
 `LineGroupLayer` 类用于在 Cesium 中批量渲染线（Polyline）。它基于 `Cesium.PolylineCollection` 实现，具有较高的渲染性能，支持多种内置材质类型（如虚线、发光线、箭头线等）以及自定义颜色和宽度。
-## 效果预览：
-![An image](/layer/line.gif)
+## 组件案例
+
+<LayerExamplePreview example="line-group" title="LineGroupLayer 线图层" />
 ## 构造函数
 
 `new LineGroupLayer(viewer, config)`
@@ -77,7 +78,7 @@ lineLayer.setData([
         geometry: {
             type: 'LineString',
             coordinates: [
-                [116.39, 39.9],
+                [125.834, 44.147],
                 [121.47, 31.23]
             ]
         },

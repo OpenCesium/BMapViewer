@@ -49,8 +49,8 @@ import 'b-map-viewer/style.css'
 
 const mapRef = ref(null)
 const camera = {
-  longitude: 116.3974,
-  latitude: 39.9093,
+  longitude: 125.83372000975274,
+  latitude: 44.14712267403385,
   height: 12000,
   pitch: -45,
 }
