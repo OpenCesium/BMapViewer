@@ -1,10 +1,10 @@
-# CloudEffect 动态云层
+# CloudEffect 体积云
 
-`CloudEffect` 通过多层分形噪声生成动态云带和云层阴影，可控制云量、尺度、高度、流速与颜色。
+`CloudEffect` 在地球上空构建具有真实高度的球形云壳，从相机向云层进行世界空间光线步进，并通过三维噪声计算每个采样点的云密度。移动或旋转镜头时，云体保持在地理空间中并产生视差。
 
 ## 组件案例
 
-<SdkExamplePreview category="weather" example="cloud" title="CloudEffect 动态云层" height="500px" />
+<SdkExamplePreview category="weather" example="cloud" title="CloudEffect 体积云" height="500px" />
 
 ## 构造函数
 
@@ -14,26 +14,36 @@ new WeatherEffects.CloudEffect(viewer, options)
 
 | 参数 | 默认值 | 范围 | 说明 |
 | --- | --- | --- | --- |
-| `intensity` | `0.75` | `0～2` | 云层混合强度 |
-| `coverage` | `0.58` | `0～1` | 云量覆盖比例 |
-| `scale` | `3.8` | `0.25～20` | 云团噪声尺度 |
-| `speed` | `0.65` | `-5～5` | 云层运动速度和方向 |
-| `altitude` | `0.66` | `0～1` | 云带在屏幕空间中的高度分布 |
-| `color` | `#d7e0e6cc` | CSS 颜色 | 云层颜色 |
+| `intensity` | `1` | `0～2` | 云体密度和整体强度 |
+| `coverage` | `0.52` | `0～1` | 云量覆盖比例 |
+| `baseHeight` | `4800` | `100～50000` | 云底相对地表高度，单位：米 |
+| `topHeight` | `8800` | `200～60000` | 云顶相对地表高度，单位：米 |
+| `scale` | `1` | `0.2～8` | 世界空间三维噪声尺度 |
+| `speed` | `0.55` | `-5～5` | 云体随风运动速度，负值反向移动 |
+| `windDirection` | `35` | `-360～360` | 水平风向角，单位：度 |
+| `maxDistance` | `160000` | `10000～500000` | 最远体积云计算距离，单位：米 |
+| `steps` | `72` | `16～72` | 每条视线的最大采样次数，越高越细腻但开销越大 |
+| `color` | `#f1f4f6e6` | CSS 颜色 | 云体颜色和透明度 |
 
 ## 使用示例
 
 ```js
 const cloud = new WeatherEffects.CloudEffect(viewer, {
-  intensity: 0.75,
-  coverage: 0.58,
-  altitude: 0.66,
-  scale: 3.8,
-  speed: 0.65,
+  intensity: 1,
+  coverage: 0.52,
+  baseHeight: 4800,
+  topHeight: 8800,
+  scale: 1,
+  speed: 0.55,
+  windDirection: 35,
+  maxDistance: 160000,
+  steps: 72,
+  color: '#f1f4f6e6',
 })
 
-cloud.setOptions({ coverage: 0.4, speed: 0.3 })
+cloud.setOptions({ coverage: 0.55, speed: 0.3, windDirection: 80 })
 ```
 
-`speed` 可以为负数，用于反转云层运动方向。云层属于全屏后处理，不表示真实三维云体高度。
+`setOptions` 会实时更新体积云参数。旧版 `altitude` 参数仍可使用，SDK 会将 `0～1` 的屏幕高度换算为体积云的 `baseHeight` 和 `topHeight`；`cloudBase`、`cloudTop` 和 `windAngle` 也分别兼容映射到新参数。
 
+体积云需要对屏幕像素执行多次三维噪声采样。移动端或集成显卡可以将 `steps` 调整到 `24～40`，桌面独立显卡可使用默认值或提高到 `72`。

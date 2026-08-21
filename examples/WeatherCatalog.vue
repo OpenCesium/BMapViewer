@@ -9,8 +9,8 @@ import { exampleModules } from './modules.js'
 const HOME_CAMERA = {
   longitude: 125.83372000975274,
   latitude: 44.14712267403385,
-  height: 4200,
-  pitch:-5,
+  height: 1800,
+  pitch: -5,
   minHeight: 40,
   maxHeight: 800000,
 }

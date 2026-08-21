@@ -13,8 +13,8 @@
 | 降雨 | `RainEffect` | 方向、速度、密度、粗细和风偏 | [查看降雨](/weather/rain) |
 | 降雪 | `SnowEffect` | 多尺度雪花、飘移和粒径 | [查看降雪](/weather/snow) |
 | 距离雾 | `FogEffect` | 深度距离、能见度和雾色 | [查看距离雾](/weather/fog) |
-| 沙尘暴 | `SandstormEffect` | 暖色颗粒、扰动和低能见度 | [查看沙尘暴](/weather/sandstorm) |
-| 动态云层 | `CloudEffect` | 云量、高度、尺度和流速 | [查看动态云层](/weather/cloud) |
+| 沙尘 | `SandstormEffect` | 暖色颗粒、扰动和低能见度 | [查看沙尘](/weather/sandstorm) |
+| 体积云 | `CloudEffect` | 世界空间云壳、视差、云量和风场 | [查看体积云](/weather/cloud) |
 | 雷雨闪电 | `RainEffect` | 细雨与程序化闪电组合 | [查看雷雨闪电](/weather/lightning) |
 
 ## 快速开始
@@ -57,17 +57,18 @@ weather.destroy()
 
 ```js
 const fog = new WeatherEffects.FogEffect(viewer, {
-  intensity: 0.78,
-  density: 0.62,
-  near: 500,
-  far: 18000,
-  skyAmount: 0.2,
-  color: '#afc5c8',
+  mode: 'depth',
+  intensity: 0.5,
+  depthStart: 0.22,
+  depthRange: 0.2,
+  density: 0.65,
+  skyAmount: 0.55,
+  color: '#ccccccff',
 })
 
 fog.hide()
 fog.show()
-fog.setOptions({ density: 0.8 })
+fog.setOptions({ depthStart: 0.26, density: 0.8 })
 fog.destroy()
 ```
 
@@ -77,9 +78,9 @@ fog.destroy()
 | --- | --- | --- | --- |
 | `rain` | `RainEffect` | `intensity`、`density`、`speed`、`size`、`angle`、`wind`、`lightning`、`color` | 可调整方向、粗细和风偏，并可启用闪电的透视雨线 |
 | `snow` | `SnowEffect` | `intensity`、`density`、`speed`、`angle`、`size`、`drift`、`color` | 多尺度飘雪与横向漂移 |
-| `fog` | `FogEffect` | `intensity`、`near`、`far`、`density`、`skyAmount`、`color` | 根据深度纹理和相机距离混合雾色 |
+| `fog` | `FogEffect` | `intensity`、`depthStart`、`depthRange`、`density`、`skyAmount`、`color` | 按深度阈值混合雾色，并兼容旧版米制距离模式 |
 | `sandstorm` | `SandstormEffect` | `intensity`、`density`、`speed`、`wind`、`color` | 暖色颗粒、扰动与低能见度合成 |
-| `cloud` | `CloudEffect` | `intensity`、`coverage`、`scale`、`speed`、`altitude`、`color` | 多层噪声生成的动态云层阴影 |
+| `cloud` | `CloudEffect` | `coverage`、`baseHeight`、`topHeight`、`scale`、`speed`、`windDirection`、`steps` | 世界空间光线步进生成具有视差的体积云 |
 | `lightning` | `LightningEffect` | `intensity`、`frequency`、`brightness`、`width`、`color` | 随机闪光和分叉闪电纹理 |
 
 `createWeatherEffect(viewer, type, options)` 也可以按类型创建效果；`sand` 是 `sandstorm` 的别名。

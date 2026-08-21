@@ -1,7 +1,7 @@
 export default {
   id: 'sandstorm',
   name: 'SandstormEffect',
-  title: '沙尘暴',
+  title: '沙尘',
   code: 'SAND',
   summary: '流动噪声、颗粒和暖色低能见度组合的沙尘天气效果。',
   parameters: ['intensity', 'density', 'speed', 'wind', 'color'],

@@ -40,6 +40,17 @@ const groupedExamples = computed(() => layerGroups.map((group) => ({
   group,
   items: layerExamples.filter((item) => item.group === group),
 })))
+
+function getDisplayIndex(example) {
+  let displayIndex = 0
+  for (const section of groupedExamples.value) {
+    for (const item of section.items) {
+      displayIndex += 1
+      if (item.id === example.id) return String(displayIndex).padStart(2, '0')
+    }
+  }
+  return '--'
+}
 const isModified = computed(() => code.value !== activeExample.value.code)
 const statusLabel = computed(() => ({
   idle: '待运行',
@@ -306,7 +317,7 @@ onBeforeUnmount(() => {
               :aria-current="activeId === example.id ? 'page' : undefined"
               @click="selectExample(example)"
             >
-              <span class="layer-index">{{ String(layerExamples.indexOf(example) + 1).padStart(2, '0') }}</span>
+              <span class="layer-index">{{ getDisplayIndex(example) }}</span>
               <span class="layer-copy"><strong>{{ example.title }}</strong><small>{{ example.name }}</small></span>
               <span class="layer-arrow">›</span>
             </button>

@@ -195,6 +195,9 @@ export const fogShader = /* glsl */ `
 uniform sampler2D colorTexture;
 uniform sampler2D depthTexture;
 uniform float intensity;
+uniform float depthMode;
+uniform float depthStart;
+uniform float depthRange;
 uniform float nearDistance;
 uniform float farDistance;
 uniform float density;
@@ -205,14 +208,26 @@ in vec2 v_textureCoordinates;
 void main() {
   vec4 sceneColor = texture(colorTexture, v_textureCoordinates);
   float depth = czm_readDepth(depthTexture, v_textureCoordinates);
-  float fogFactor = skyAmount;
-  if (depth < 0.999999) {
+  float fogFactor;
+
+  if (depthMode > 0.5) {
+    // Reference depth-fog formula: f = (depth - 0.22) / 0.2.
+    // depthStart and depthRange expose the two constants as runtime options.
+    fogFactor = (depth - depthStart) / max(depthRange, 0.000001);
+    fogFactor = clamp(fogFactor * density, 0.0, 1.0);
+    if (depth >= 0.999999) {
+      fogFactor = skyAmount;
+    }
+  } else if (depth < 0.999999) {
     vec4 eyePosition = czm_windowToEyeCoordinates(gl_FragCoord.xy, depth);
     float distanceToCamera = length(eyePosition.xyz);
     float rangeFog = smoothstep(nearDistance, max(farDistance, nearDistance + 1.0), distanceToCamera);
     fogFactor = 1.0 - exp(-rangeFog * density * 2.0);
+  } else {
+    fogFactor = skyAmount;
   }
-  fogFactor = clamp(fogFactor * intensity, 0.0, fogColor.a);
+
+  fogFactor = clamp(fogFactor * intensity * fogColor.a, 0.0, 1.0);
   out_FragColor = vec4(mix(sceneColor.rgb, fogColor.rgb, fogFactor), sceneColor.a);
 }
 `
@@ -258,54 +273,186 @@ void main() {
 
 export const cloudShader = /* glsl */ `
 uniform sampler2D colorTexture;
+uniform sampler2D depthTexture;
 uniform float intensity;
 uniform float coverage;
+uniform float baseHeight;
+uniform float topHeight;
+uniform float planetRadius;
 uniform float scale;
 uniform float speed;
-uniform float altitude;
+uniform vec3 windDirectionWC;
+uniform float maxDistance;
+uniform float marchSteps;
 uniform vec4 cloudColor;
 in vec2 v_textureCoordinates;
 
-float bmvHash(vec2 p) {
-  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+const int BMV_MAX_CLOUD_STEPS = 72;
+
+float bmvCloudHash(vec3 p) {
+  p = fract(p * 0.1031);
+  p += dot(p, p.yzx + 33.33);
+  return fract((p.x + p.y) * p.z);
 }
 
-float bmvNoise(vec2 p) {
-  vec2 cell = floor(p);
-  vec2 local = fract(p);
+float bmvCloudNoise(vec3 p) {
+  vec3 cell = floor(p);
+  vec3 local = fract(p);
   local = local * local * (3.0 - 2.0 * local);
-  return mix(
-    mix(bmvHash(cell), bmvHash(cell + vec2(1.0, 0.0)), local.x),
-    mix(bmvHash(cell + vec2(0.0, 1.0)), bmvHash(cell + vec2(1.0, 1.0)), local.x),
-    local.y
-  );
+  float n000 = bmvCloudHash(cell + vec3(0.0, 0.0, 0.0));
+  float n100 = bmvCloudHash(cell + vec3(1.0, 0.0, 0.0));
+  float n010 = bmvCloudHash(cell + vec3(0.0, 1.0, 0.0));
+  float n110 = bmvCloudHash(cell + vec3(1.0, 1.0, 0.0));
+  float n001 = bmvCloudHash(cell + vec3(0.0, 0.0, 1.0));
+  float n101 = bmvCloudHash(cell + vec3(1.0, 0.0, 1.0));
+  float n011 = bmvCloudHash(cell + vec3(0.0, 1.0, 1.0));
+  float n111 = bmvCloudHash(cell + vec3(1.0, 1.0, 1.0));
+  float nearPlane = mix(mix(n000, n100, local.x), mix(n010, n110, local.x), local.y);
+  float farPlane = mix(mix(n001, n101, local.x), mix(n011, n111, local.x), local.y);
+  return mix(nearPlane, farPlane, local.z);
 }
 
-float bmvFbm(vec2 p) {
-  float value = 0.0;
-  float amplitude = 0.55;
-  for (int index = 0; index < 5; index++) {
-    value += amplitude * bmvNoise(p);
-    p = p * 2.03 + vec2(7.1, 3.7);
-    amplitude *= 0.5;
+vec2 bmvRaySphere(vec3 origin, vec3 direction, float radius) {
+  float projected = dot(origin, direction);
+  float discriminant = projected * projected - (dot(origin, origin) - radius * radius);
+  if (discriminant < 0.0) return vec2(-1.0);
+  float root = sqrt(discriminant);
+  return vec2(-projected - root, -projected + root);
+}
+
+bool bmvCloudShellInterval(
+  vec3 origin,
+  vec3 direction,
+  float innerRadius,
+  float outerRadius,
+  out float startDistance,
+  out float endDistance
+) {
+  vec2 outerHit = bmvRaySphere(origin, direction, outerRadius);
+  if (outerHit.y <= 0.0) return false;
+
+  vec2 innerHit = bmvRaySphere(origin, direction, innerRadius);
+  float cameraRadius = length(origin);
+
+  if (cameraRadius < innerRadius) {
+    if (innerHit.y <= 0.0) return false;
+    startDistance = innerHit.y;
+    endDistance = outerHit.y;
+  } else if (cameraRadius > outerRadius) {
+    startDistance = max(outerHit.x, 0.0);
+    endDistance = outerHit.y;
+    if (innerHit.x > startDistance) {
+      endDistance = min(endDistance, innerHit.x);
+    }
+  } else {
+    startDistance = 0.0;
+    endDistance = outerHit.y;
+    if (innerHit.x > 0.0) {
+      endDistance = min(endDistance, innerHit.x);
+    }
   }
-  return value;
+
+  return endDistance > startDistance;
+}
+
+float bmvCloudDensity(vec3 positionWC, vec3 windOffset, out float heightRatio) {
+  float height = length(positionWC) - planetRadius;
+  heightRatio = (height - baseHeight) / max(topHeight - baseHeight, 1.0);
+  if (heightRatio <= 0.0 || heightRatio >= 1.0) return 0.0;
+
+  // The following shape model follows the reference implementation: a broad
+  // weather field chooses the cloud type, while higher-frequency noise erodes
+  // the body into isolated cumulus volumes.
+  vec3 noisePosition = positionWC * (0.002 * scale) + windOffset;
+  float shape = bmvCloudNoise(noisePosition * 0.30);
+  float shapeHeight = bmvCloudNoise(noisePosition * 0.05);
+  float erosion = bmvCloudNoise(noisePosition) * 0.50;
+  erosion += bmvCloudNoise(noisePosition * 2.11 + vec3(3.7, 9.2, 1.4)) * 0.20;
+
+  float cumulonimbus = clamp((shapeHeight - 0.5) * 2.0, 0.0, 1.0);
+  cumulonimbus *= clamp(1.0 - pow(heightRatio - 0.5, 2.0) * 4.0, 0.0, 1.0);
+  float cumulus = clamp(1.0 - pow(heightRatio - 0.25, 2.0) * 25.0, 0.0, 1.0);
+  cumulus *= shapeHeight;
+  float stratoCumulus = clamp(1.0 - pow(heightRatio - 0.12, 2.0) * 60.0, 0.0, 1.0);
+  stratoCumulus *= 1.0 - shapeHeight;
+
+  float cloudType = clamp(stratoCumulus + cumulus + cumulonimbus, 0.0, 1.0);
+  float density = cloudType * 2.0 * coverage;
+  density -= 1.0 - shape;
+  density -= erosion;
+  return clamp(density, 0.0, 1.0) * intensity;
 }
 
 void main() {
   vec4 sceneColor = texture(colorTexture, v_textureCoordinates);
+  float depth = czm_readDepth(depthTexture, v_textureCoordinates);
+  bool isSky = depth <= 0.0 || depth >= 0.999999;
+  if (isSky) depth = 1.0;
+
+  vec4 eyePosition = czm_windowToEyeCoordinates(gl_FragCoord.xy, depth);
+  vec4 worldPosition = czm_inverseView * eyePosition;
+  vec3 targetWC = worldPosition.xyz / max(worldPosition.w, 0.000001);
+  vec3 rayDirection = normalize(targetWC - czm_viewerPositionWC);
+  float sceneDistance = isSky
+    ? maxDistance
+    : min(length(targetWC - czm_viewerPositionWC), maxDistance);
+
+  float cloudStart;
+  float cloudEnd;
+  float innerRadius = planetRadius + baseHeight;
+  float outerRadius = planetRadius + topHeight;
+  if (!bmvCloudShellInterval(
+    czm_viewerPositionWC,
+    rayDirection,
+    innerRadius,
+    outerRadius,
+    cloudStart,
+    cloudEnd
+  )) {
+    out_FragColor = sceneColor;
+    return;
+  }
+
+  cloudEnd = min(cloudEnd, sceneDistance);
+  if (cloudEnd <= cloudStart) {
+    out_FragColor = sceneColor;
+    return;
+  }
+
+  float stepCount = clamp(floor(marchSteps + 0.5), 16.0, float(BMV_MAX_CLOUD_STEPS));
+  float stepLength = (cloudEnd - cloudStart) / stepCount;
+  float jitter = bmvCloudHash(vec3(gl_FragCoord.xy, float(czm_frameNumber))) - 0.5;
+  float distanceAlongRay = cloudStart + stepLength * (0.5 + jitter * 0.35);
   float time = float(czm_frameNumber) / 60.0;
-  float aspect = czm_viewport.z / max(czm_viewport.w, 1.0);
-  vec2 uv = v_textureCoordinates * vec2(aspect, 1.0);
-  vec2 flow = vec2(time * speed * 0.025, time * speed * 0.006);
-  float field = bmvFbm(uv * scale + flow);
-  float threshold = mix(0.82, 0.28, coverage);
-  float cloud = smoothstep(threshold, threshold + 0.22, field);
-  float center = clamp(altitude, 0.15, 0.92);
-  float band = 1.0 - smoothstep(0.28, 0.64, abs(v_textureCoordinates.y - center));
-  cloud *= band * intensity * cloudColor.a;
-  vec3 shadowed = sceneColor.rgb * (1.0 - cloud * 0.18);
-  out_FragColor = vec4(mix(shadowed, cloudColor.rgb, cloud), sceneColor.a);
+  vec3 windOffset = normalize(windDirectionWC) * time * speed * 0.035;
+  vec3 sunDirection = normalize(czm_sunPositionWC);
+  vec4 cloudAccumulation = vec4(0.0);
+
+  for (int index = 0; index < BMV_MAX_CLOUD_STEPS; index++) {
+    if (float(index) >= stepCount || cloudAccumulation.a > 0.985) break;
+    vec3 samplePosition = czm_viewerPositionWC + rayDirection * distanceAlongRay;
+    float heightRatio;
+    float density = bmvCloudDensity(samplePosition, windOffset, heightRatio);
+
+    if (density > 0.001) {
+      float sampleAlpha = 1.0 - exp(-density * stepLength * 0.00125);
+      sampleAlpha *= cloudColor.a;
+      vec3 upDirection = normalize(samplePosition);
+      float sunLight = max(dot(upDirection, sunDirection), 0.0);
+      float silverLining = pow(max(dot(rayDirection, sunDirection), 0.0), 10.0);
+      float heightLight = mix(0.62, 1.08, heightRatio);
+      float lighting = heightLight + sunLight * 0.28 + silverLining * 0.42;
+      vec3 sampleColor = cloudColor.rgb * lighting;
+      float remainingAlpha = 1.0 - cloudAccumulation.a;
+      cloudAccumulation.rgb += sampleColor * sampleAlpha * remainingAlpha;
+      cloudAccumulation.a += sampleAlpha * remainingAlpha;
+    }
+
+    distanceAlongRay += stepLength;
+  }
+
+  vec3 composited = sceneColor.rgb * (1.0 - cloudAccumulation.a) + cloudAccumulation.rgb;
+  out_FragColor = vec4(composited, sceneColor.a);
 }
 `
 

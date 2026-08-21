@@ -14,7 +14,10 @@ import PolygonPrimitiveLayer from './PolygonPrimitiveLayer.js'
 import LineMaterialLayer from "./LineMaterialLayer.js";
 import HeatmapLayer from "./HeatmapLayer.js";
 import HeatmapPrimitiveLayer from "./HeatmapPrimitiveLayer.js";
+import Heatmap3DLayer from './Heatmap3DLayer.js'
 import RadarScanner3DLayer from "./RadarScanner3DLayer.js";
+import GradientWallLayer from './GradientWallLayer.js'
+import DynamicWaterLayer from './DynamicWaterLayer.js'
 
 export default {
     IconGroupLayer,
@@ -33,5 +36,8 @@ export default {
     LineMaterialLayer,
     HeatmapLayer,
     HeatmapPrimitiveLayer,
-    RadarScanner3DLayer
+    Heatmap3DLayer,
+    RadarScanner3DLayer,
+    GradientWallLayer,
+    DynamicWaterLayer
 }

@@ -3,16 +3,26 @@ import BaseWeatherEffect from './BaseWeatherEffect.js'
 import { fogShader } from './shaders.js'
 
 const defaults = {
-  intensity: 0.78,
-  near: 500,
-  far: 12000,
-  density: 1.15,
-  skyAmount: 0.22,
-  color: '#b9c7cddd',
+  mode: 'depth',
+  intensity: 0.5,
+  depthStart: 0.22,
+  depthRange: 0.2,
+  density: 0.65,
+  skyAmount: 0.55,
+  color: '#ccccccff',
 }
 
 function normalizeFogOptions(options = {}) {
   const normalized = { ...options }
+
+  // Preserve the previous metric-distance API. Passing near/far/visibility
+  // without an explicit mode automatically selects the legacy algorithm.
+  if (
+    normalized.mode == null
+    && (normalized.near != null || normalized.far != null || normalized.visibility != null)
+  ) {
+    normalized.mode = 'distance'
+  }
   if (normalized.far == null && normalized.visibility != null) {
     normalized.far = normalized.visibility
   }
@@ -40,8 +50,11 @@ class FogEffect extends BaseWeatherEffect {
       fragmentShader: fogShader,
       uniforms: {
         intensity: () => this.getNumber('intensity', defaults.intensity, 0, 2),
-        nearDistance: () => this.getNumber('near', defaults.near, 0, 10000000),
-        farDistance: () => this.getNumber('far', defaults.far, 1, 10000000),
+        depthMode: () => String(this.config.mode).toLowerCase() === 'distance' ? 0 : 1,
+        depthStart: () => this.getNumber('depthStart', defaults.depthStart, 0, 1),
+        depthRange: () => this.getNumber('depthRange', defaults.depthRange, 0.000001, 1),
+        nearDistance: () => this.getNumber('near', 500, 0, 10000000),
+        farDistance: () => this.getNumber('far', 12000, 1, 10000000),
         density: () => this.getNumber('density', defaults.density, 0.01, 10),
         skyAmount: () => this.getNumber('skyAmount', defaults.skyAmount, 0, 1),
         fogColor: () => this.getColor('color', defaults.color),

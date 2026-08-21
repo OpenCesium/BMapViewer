@@ -1,10 +1,10 @@
-# SandstormEffect 沙尘暴
+# SandstormEffect 沙尘
 
 `SandstormEffect` 将流动噪声、细颗粒和暖色低能见度合成为沙尘天气，适合荒漠、极端天气和应急态势场景。
 
 ## 组件案例
 
-<SdkExamplePreview category="weather" example="sandstorm" title="SandstormEffect 沙尘暴" height="500px" />
+<SdkExamplePreview category="weather" example="sandstorm" title="SandstormEffect 沙尘" height="500px" />
 
 ## 构造函数
 

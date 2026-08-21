@@ -33,7 +33,7 @@ public/tiles/{z}/{x}/{reverseY}.png
 | --- | --- |
 | 点位标注 | `IconGroupLayer`、`IconClusterLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
 | 线面图层 | `LineGroupLayer`、`LinePrimitiveLayer`、`PolygonPrimitiveLayer`、`LineMaterialLayer` |
-| 三维场景 | `Build3DLayer`、`RadarScanner3DLayer` |
+| 三维场景 | `Build3DLayer`、`GradientWallLayer`、`DynamicWaterLayer`、`Heatmap3DLayer`、`RadarScanner3DLayer` |
 | 动态效果 | `CircleGroupLayer`、`CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
 | 专题分析 | `HeatmapLayer`、`HeatmapPrimitiveLayer` |
 

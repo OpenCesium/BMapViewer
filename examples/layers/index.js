@@ -14,7 +14,10 @@ import polygonPrimitive from './polygon-primitive.js'
 import lineMaterial from './line-material.js'
 import heatmap from './heatmap.js'
 import heatmapPrimitive from './heatmap-primitive.js'
+import heatmap3d from './heatmap-3d.js'
 import radarScanner3d from './radar-scanner-3d.js'
+import gradientWall from './gradient-wall.js'
+import dynamicWater from './dynamic-water.js'
 
 export const layerExamples = [
   iconGroup,
@@ -33,7 +36,10 @@ export const layerExamples = [
   lineMaterial,
   heatmap,
   heatmapPrimitive,
+  heatmap3d,
   radarScanner3d,
+  gradientWall,
+  dynamicWater,
 ]
 
 export const layerGroups = [...new Set(layerExamples.map((item) => item.group))]
