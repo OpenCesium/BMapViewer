@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
+import * as Cesium from 'cesium'
 import { BaseMaps, BMapViewer } from '../src/sdk/index.js'
 import { baseMapExamples } from './base-maps/index.js'
 
@@ -40,12 +41,13 @@ async function runExample() {
 
   try {
     const execute = new AsyncFunction(
+      'Cesium',
       'BaseMaps',
       'viewer',
       'tileUrl',
       `'use strict';\n${example.value.code}`,
     )
-    activeBaseMap = await execute(BaseMaps, viewer, tileUrl)
+    activeBaseMap = await execute(Cesium, BaseMaps, viewer, tileUrl)
   } catch (error) {
     console.error('底图案例运行失败：', error)
   }

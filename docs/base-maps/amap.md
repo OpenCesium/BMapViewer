@@ -11,7 +11,7 @@
 ```js
 const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'amap',
-  style: 'elec',
+  style: 'img', // img、elec、cva
   crs: 'WGS84',
   maximumLevel: 18,
 })
@@ -19,10 +19,9 @@ const baseMap = new BaseMaps.BaseMap(viewer, {
 
 | 参数 | 常用值 | 说明 |
 | --- | --- | --- |
-| `style` | `elec`、`img`、`cva` | 电子地图、影像或标注样式 |
+| `style` | `img`、`elec`、`cva` | 影像、电子地图或标注样式 |
 | `crs` | `WGS84` | 启用 GCJ-02 切片纠偏 |
 | `url` | URL 模板 | 覆盖 SDK 默认服务模板 |
 | `subdomains` | 数组 | 自定义服务子域名 |
 
 互联网底图受服务提供方许可、访问策略和网络环境约束，生产环境应使用具有合法授权的地址。
-

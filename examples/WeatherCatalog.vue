@@ -329,7 +329,7 @@ onBeforeUnmount(() => {
 .code-toggle span { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid #4c4634; color: var(--amber); background: #11191a; font: 22px/1 "Cascadia Code", monospace; transition: transform 250ms cubic-bezier(.22,1,.36,1), background-color 180ms ease; }
 .code-toggle span.open { transform: rotate(180deg); }
 .code-toggle b { writing-mode: vertical-rl; color: currentColor; font: 700 8px/1 "Cascadia Code", monospace; letter-spacing: .18em; }
-.code-body { min-width: 396px; height: 100%; padding: 20px 20px 18px; display: grid; grid-template-rows: auto auto auto auto minmax(170px, 1fr) auto auto; gap: 9px; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(.22,1,.36,1) 120ms, visibility 0s linear 0s; }
+.code-body { box-sizing: border-box; min-width: 396px; min-height: 0; height: 100%; padding: 20px 20px 18px; display: grid; grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto; gap: 9px; overflow: hidden; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(.22,1,.36,1) 120ms, visibility 0s linear 0s; }
 .collapsed .code-body { visibility: hidden; opacity: 0; transform: translateX(-10px); pointer-events: none; transition: opacity 140ms ease 0ms, transform 160ms ease 0ms, visibility 0s linear 140ms; }
 .code-heading { display: flex; justify-content: space-between; align-items: start; }
 .code-heading h2 { margin: 8px 0 0; font: 600 14px "Cascadia Code", monospace; }
@@ -343,7 +343,7 @@ onBeforeUnmount(() => {
 .run-status { min-height: 37px; padding: 0 11px; display: flex; align-items: center; justify-content: space-between; gap: 9px; color: #82989b; background: #0e1c20; font: 9px "Cascadia Code", monospace; }
 .run-status > span { min-width: 0; display: flex; align-items: center; gap: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .run-status time { flex: 0 0 auto; color: #607479; }
-.code-actions { display: flex; align-items: center; gap: 8px; }
+.code-actions { min-height: 34px; display: flex; align-items: center; gap: 8px; }
 .code-actions button { min-height: 34px; padding: 0 12px; border: 1px solid #2b3c42; color: #74888c; background: transparent; cursor: pointer; font-size: 9px; }
 .code-actions button:first-child { border-color: var(--amber); color: #15130c; background: var(--amber); font-weight: 700; }
 .code-actions button:disabled { opacity: .35; cursor: not-allowed; }

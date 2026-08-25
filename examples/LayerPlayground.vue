@@ -525,7 +525,7 @@ onBeforeUnmount(() => {
 .toggle-arrow { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid #24505b; color: var(--cyan); background: #081821; font: 22px/1 "Cascadia Code", monospace; box-shadow: 0 0 16px rgba(68, 238, 224, 0.08); transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), background-color 180ms ease; }
 .toggle-arrow.open { transform: rotate(180deg); }
 .toggle-label { writing-mode: vertical-rl; color: currentColor; font: 700 8px/1 "Cascadia Code", monospace; letter-spacing: 0.18em; }
-.code-panel-body { min-width: 370px; min-height: 0; padding: 20px 18px 16px; display: flex; flex-direction: column; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(0.22, 1, 0.36, 1) 120ms, visibility 0s linear 0s; }
+.code-panel-body { box-sizing: border-box; min-width: 370px; min-height: 0; height: 100%; padding: 20px 18px 16px; display: flex; flex-direction: column; overflow: hidden; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(0.22, 1, 0.36, 1) 120ms, visibility 0s linear 0s; }
 .code-panel.collapsed .code-panel-body { visibility: hidden; opacity: 0; transform: translateX(-10px); pointer-events: none; transition: opacity 140ms ease 0ms, transform 160ms ease 0ms, visibility 0s linear 140ms; }
 .panel-toolbar { min-height: 38px; justify-content: space-between; }
 .panel-toolbar h2 { margin-top: 7px; font: 600 15px "Cascadia Code", monospace; }

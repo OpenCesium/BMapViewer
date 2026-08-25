@@ -14,7 +14,7 @@ BMapViewer 是面向 Vue 3 应用的 Cesium 地理信息可视化 SDK。它统�
 | 能力 | 说明 |
 | --- | --- |
 | Viewer 生命周期 | 通过 Vue 组件创建、控制和销毁 `Cesium.Viewer` |
-| 多源底图 | 通过 `BaseMaps` 管理离线瓦片、高德、百度、腾讯、ArcGIS、天地图、Google、GeoVis 和自定义切片 |
+| 底图与地形 | 通过 `BaseMaps` 管理离线瓦片、多源互联网地图、自定义切片、Cesium World Terrain 与天地图三维地形 |
 | 可视化图层 | 提供点、线、面、气泡、热力图、3D Tiles 与动态效果图层 |
 | 拾取与绘制 | 支持点、图标点、线、多边形拾取及节点拖拽编辑 |
 | 空间分析 | 集成 Turf，使用 GeoJSON 完成距离、缓冲和空间关系计算 |
@@ -47,7 +47,7 @@ npm run dev
 
 示例站以模块主页作为统一入口，当前包含：
 
-- `#/base-maps`：离线瓦片与多源 Provider 的可编辑底图示例
+- `#/base-maps`：离线瓦片、多源 Provider 与三维地形的可编辑示例
 - `#/layers`：业务图层目录与可编辑运行示例
 - `#/pick-tools`：点、图标点、线和多边形拾取示例
 - `#/weather`：六类天气效果与可编辑运行示例

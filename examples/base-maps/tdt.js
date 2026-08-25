@@ -11,7 +11,7 @@ if (key.startsWith('替换')) {
 
 return new BaseMaps.BaseMap(viewer, {
   type: 'tdt',
-  style: 'vec',
+  style: 'vec', // vec、cva、img、cia、ter
   key,
 })`,
 }

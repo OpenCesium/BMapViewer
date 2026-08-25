@@ -1,5 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
+import * as Cesium from 'cesium'
 import { BaseMaps, BMapViewer } from '../src/sdk/index.js'
 import CodeExampleEditor from './CodeExampleEditor.vue'
 import { baseMapExamples, baseMapGroups } from './base-maps/index.js'
@@ -81,12 +82,13 @@ async function runCode() {
 
   try {
     const execute = new AsyncFunction(
+      'Cesium',
       'BaseMaps',
       'viewer',
       'tileUrl',
       `'use strict';\n${code.value}`,
     )
-    const result = await execute(BaseMaps, viewer, tileUrl)
+    const result = await execute(Cesium, BaseMaps, viewer, tileUrl)
     const cleanup = async () => {
       if (typeof result === 'function') await result()
       else if (typeof result?.destroy === 'function') result.destroy()
@@ -215,7 +217,7 @@ onBeforeUnmount(() => {
             <em v-if="isModified">已修改</em>
           </div>
           <p>{{ activeExample.summary }}</p>
-          <div class="scope-line"><span>可用变量</span><code>BaseMaps</code><code>viewer</code><code>tileUrl</code></div>
+          <div class="scope-line"><span>可用变量</span><code>Cesium</code><code>BaseMaps</code><code>viewer</code><code>tileUrl</code></div>
           <div class="editor-shell">
             <CodeExampleEditor
               v-model="code"
@@ -290,7 +292,7 @@ onBeforeUnmount(() => {
 .code-toggle span { width: 26px; height: 26px; display: grid; place-items: center; border: 1px solid #24505b; color: var(--cyan); background: #081821; font: 22px/1 "Cascadia Code", monospace; transition: transform 240ms cubic-bezier(.22,1,.36,1), background-color 180ms ease; }
 .code-toggle span.open { transform: rotate(180deg); }
 .code-toggle b { writing-mode: vertical-rl; color: currentColor; font: 700 8px/1 "Cascadia Code", monospace; letter-spacing: .18em; }
-.code-body { min-width: 386px; height: 100%; padding: 22px 20px 18px; display: grid; grid-template-rows: auto auto auto minmax(180px, 1fr) auto auto; gap: 10px; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(.22,1,.36,1) 120ms, visibility 0s linear 0s; }
+.code-body { box-sizing: border-box; min-width: 386px; min-height: 0; height: 100%; padding: 22px 20px 18px; display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto auto; gap: 10px; overflow: hidden; visibility: visible; opacity: 1; transform: translateX(0); transition: opacity 190ms ease 150ms, transform 230ms cubic-bezier(.22,1,.36,1) 120ms, visibility 0s linear 0s; }
 .collapsed .code-body { visibility: hidden; opacity: 0; transform: translateX(-10px); pointer-events: none; transition: opacity 140ms ease 0ms, transform 160ms ease 0ms, visibility 0s linear 140ms; }
 .code-heading { display: flex; justify-content: space-between; align-items: start; }
 .code-heading h2 { margin: 8px 0 0; font: 600 14px "Cascadia Code", monospace; }
@@ -303,7 +305,7 @@ onBeforeUnmount(() => {
 .run-status { min-height: 37px; padding: 0 11px; display: flex; align-items: center; justify-content: space-between; gap: 9px; color: #79a0a7; background: #091b24; font: 9px "Cascadia Code", monospace; }
 .run-status > span { min-width: 0; display: flex; align-items: center; gap: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .run-status time { flex: 0 0 auto; color: #4e7079; }
-.code-actions { display: flex; align-items: center; gap: 8px; }
+.code-actions { min-height: 34px; display: flex; align-items: center; gap: 8px; }
 .code-actions button { min-height: 34px; padding: 0 12px; border: 1px solid #173641; color: #69868e; background: transparent; cursor: pointer; font-size: 9px; }
 .code-actions button:first-child { border-color: #58c7ff; color: #071017; background: #58c7ff; font-weight: 700; }
 .code-actions button:disabled { opacity: .35; cursor: not-allowed; }

@@ -11,7 +11,7 @@ if (key.startsWith('替换')) {
 
 return new BaseMaps.BaseMap(viewer, {
   type: 'geovis',
-  style: 'vec',
+  style: 'vec', // img、vec、ter、cia、cat
   format: 'png',
   key,
 })`,

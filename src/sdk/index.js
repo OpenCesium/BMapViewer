@@ -21,6 +21,10 @@ const BMapViewerPlugin = {
 export { MapLayers, BaseMaps, WeatherEffects }
 export {
     BaseMap,
+    CesiumTerrain,
+    TdtTerrain,
+    createCesiumTerrainProvider,
+    CESIUM_WORLD_TERRAIN_ASSET_ID,
     createImageryProvider,
     imageryProviderTypes,
     AMapImageryProvider,
@@ -30,6 +34,9 @@ export {
     baiduImageryStyles,
     TencentImageryProvider,
     TdtImageryProvider,
+    TdtTerrainProvider,
+    tdtTerrainUrl,
+    tdtTerrainSubdomains,
     GoogleImageryProvider,
     googleImageryStyles,
     GeoVisImageryProvider,

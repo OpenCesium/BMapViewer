@@ -3,11 +3,10 @@ export default {
   name: 'GoogleImageryProvider',
   title: 'Google 地图',
   group: '互联网底图',
-  summary: '加载 Google 路网底图；支持 roadmap、satellite、terrain、hybrid 等样式别名。',
+  summary: '加载 Google 电子地图；支持 img、elec、ter、cva、img_cva 及其兼容别名。',
   code: `const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'google',
-  // 可改为 roadmap、satellite、terrain 或 hybrid 后重新运行
-  style: 'roadmap',
+  style: 'elec', // img、elec、ter、cva、img_cva
   crs: 'WGS84',
   maximumLevel: 22,
 })

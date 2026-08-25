@@ -8,7 +8,7 @@ next:
 
 BMapViewer 是面向 Vue 3 应用的 Cesium 地理信息可视化 SDK。它将 Viewer 生命周期、底图管理、业务图层和地图交互整理为清晰、可组合的 API，让业务代码专注于数据与场景表达。
 
-通过 `BMapViewer` 组件可以快速创建 Cesium 场景；通过 `BaseMaps` 可以加载离线瓦片和多源互联网底图；通过 `MapLayers` 可以加载点、线、面、气泡、热力图、3D Tiles 和动态效果；通过 `PickTools` 与 Turf 可以完成拾取、绘制和空间分析；通过 `WeatherEffects` 可以加入雨、雪、雾、沙尘、云层和闪电天气。
+通过 `BMapViewer` 组件可以快速创建 Cesium 场景；通过 `BaseMaps` 可以加载离线瓦片、多源互联网底图和三维地形；通过 `MapLayers` 可以加载点、线、面、气泡、热力图、3D Tiles 和动态效果；通过 `PickTools` 与 Turf 可以完成拾取、绘制和空间分析；通过 `WeatherEffects` 可以加入雨、雪、雾、沙尘、云层和闪电天气。
 
 ::: tip 一句话理解
 BMapViewer 为 Cesium 提供 Vue 3 组件入口，并为常见 GIS 能力提供统一的创建、更新与销毁方式。
@@ -19,7 +19,7 @@ BMapViewer 为 Cesium 提供 Vue 3 组件入口，并为常见 GIS 能力提供�
 | 模块 | 解决的问题 |
 | --- | --- |
 | `BMapViewer` | Viewer 初始化、相机配置、点击事件与生命周期管理 |
-| `BaseMaps` | 离线瓦片、多源 Provider、坐标纠偏和自定义切片方案 |
+| `BaseMaps` | 离线瓦片、多源影像、Cesium ion 与天地图地形 Provider、坐标纠偏和自定义切片方案 |
 | `MapLayers` | 点线面、标注、气泡、热力图、3D Tiles 和动态效果 |
 | `WeatherEffects` | 六类屏幕空间天气效果及创建、切换、显隐与销毁管理 |
 | `PickTools` | 点、图标点、线和多边形拾取，支持拖拽编辑 |

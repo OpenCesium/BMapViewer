@@ -4,14 +4,14 @@
 
 ## 组件案例
 
-<SdkExamplePreview category="base-map" example="google" title="GoogleImageryProvider 路网地图" />
+<SdkExamplePreview category="base-map" example="google" title="GoogleImageryProvider 电子地图" />
 
 ## 兼容模板用法
 
 ```js
 const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'google',
-  style: 'roadmap',
+  style: 'elec', // img、elec、ter、cva、img_cva
   crs: 'WGS84',
   maximumLevel: 22,
 })
@@ -21,7 +21,7 @@ const baseMap = new BaseMaps.BaseMap(viewer, {
 
 | 类型 | 样式别名 |
 | --- | --- |
-| 路网 | `normal`、`vec`、`elec`、`roadmap` |
+| 电子地图 | `elec`；兼容 `normal`、`vec`、`roadmap` |
 | 影像 | `img`、`satellite` |
 | 标注 | `cva`、`labels` |
 | 地形 | `ter`、`terrain` |
@@ -41,4 +41,3 @@ const baseMap = new BaseMaps.BaseMap(viewer, {
 ```
 
 公开案例使用兼容模板，实际可用性受网络环境和服务策略影响。
-

@@ -13,6 +13,7 @@ import { BaseMaps } from 'b-map-viewer'
 | 底图生命周期 | `BaseMaps.BaseMap` |
 | Provider 工厂 | `BaseMaps.createImageryProvider` |
 | 在线地图 | `AMapImageryProvider`、`BaiduImageryProvider`、`TencentImageryProvider`、`ArcGISImageryProvider`、`TdtImageryProvider`、`GoogleImageryProvider`、`GeoVisImageryProvider` |
+| 三维地形 | `CesiumTerrain`、`createCesiumTerrainProvider`、`TdtTerrain`、`TdtTerrainProvider` |
 | 坐标纠偏 | `GCJ02TilingScheme`、`BD09TilingScheme`、`CoordTransform` |
 | 自定义切片 | `CustomGeographicTilingScheme`、`CustomMercatorTilingScheme` |
 | 百度投影 | `BD09Projection` |
@@ -28,8 +29,25 @@ import { BaseMaps } from 'b-map-viewer'
 | 腾讯地图 | `TencentImageryProvider` | [查看腾讯地图](/base-maps/tencent) |
 | ArcGIS 全球影像 | `ArcGISImageryProvider` | [查看 ArcGIS](/base-maps/arcgis) |
 | Google 地图 | `GoogleImageryProvider` | [查看 Google 地图](/base-maps/google) |
+| 天地图 | `TdtImageryProvider` | [查看天地图](/base-maps/tdt) |
+| 天地图三维地形 | `TdtTerrain / TdtTerrainProvider` | [查看天地图三维地形](/base-maps/tdt-terrain) |
+| Cesium 官方全球地形 | `CesiumTerrain` | [查看 Cesium World Terrain](/base-maps/cesium-terrain) |
+| 星图地球 | `GeoVisImageryProvider` | [查看星图地球](/base-maps/geovis) |
 
-天地图和星图地球需要开发者凭证，配置方式见 [多源 Provider](/base-maps/providers)。公开文档不会嵌入访问 Key。
+天地图、星图地球和 Cesium World Terrain 需要开发者凭证，配置方式分别见 [天地图](/base-maps/tdt)、[星图地球](/base-maps/geovis) 和 [Cesium 官方全球地形](/base-maps/cesium-terrain)。公开文档不会嵌入访问 Key 或 Token。
+
+## 在线底图 style 对照
+
+| 底图 | 默认示例 | 可选 `style` | 说明 |
+| --- | --- | --- | --- |
+| 高德地图 | `img` | `img`、`elec`、`cva` | 影像、电子地图、标注 |
+| 百度地图 | `normal` | `img`、`vec`、`normal`、`dark` | 影像、矢量、标准地图、暗色自定义样式 |
+| Google 地图 | `elec` | `img`、`elec`、`ter`、`cva`、`img_cva` | 影像、电子地图、地形、标注、影像标注混合 |
+| 星图地球 | `vec` | `img`、`vec`、`ter`、`cia`、`cat` | 影像、矢量、地形及对应标注 |
+| 天地图 | `vec` | `vec`、`cva`、`img`、`cia`、`ter` | 矢量、矢量标注、影像、影像标注、地形晕渲影像 |
+| 腾讯地图 | `1` | `img`、`1` | 影像、经典地图 |
+
+百度 `dark` 需要同时配置具有访问权限的暗色瓦片 `url`；SDK 不会回退到已失效的旧版公共自定义样式地址。天地图和星图地球还需要对应服务的 Key。
 
 ## BaseMap
 
@@ -59,7 +77,7 @@ const baseMap = new BaseMaps.BaseMap(viewer, {
 | `layerOptions` | object | `{}` | 传递给 `Cesium.ImageryLayer` 的参数 |
 | `url`、`minimumLevel` 等 | - | - | 未被底图管理器消费的字段会继续传给 Provider |
 
-百度与 Google 的 `style` 别名、官方凭证模式和地址覆盖方式见 [多源 Provider](/base-maps/providers)。
+各 Provider 的 `style` 含义、兼容别名、凭证模式和地址覆盖方式见 [多源 Provider](/base-maps/providers)。
 
 ### 生命周期方法
 

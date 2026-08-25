@@ -1,4 +1,6 @@
 import BaseMap from './BaseMap.js'
+import CesiumTerrain from './CesiumTerrain.js'
+import TdtTerrain from './TdtTerrain.js'
 import { createImageryProvider, imageryProviderTypes } from './createImageryProvider.js'
 import AMapImageryProvider from './imagery/amap/AMapImageryProvider.js'
 import ArcGISImageryProvider, { arcgisWorldImageryUrl } from './imagery/arcgis/ArcGISImageryProvider.js'
@@ -6,6 +8,13 @@ import BaiduImageryProvider, { baiduImageryStyles } from './imagery/baidu/BaiduI
 import GeoVisImageryProvider from './imagery/geovis/GeoVisImageryProvider.js'
 import GoogleImageryProvider, { googleImageryStyles } from './imagery/google/GoogleImageryProvider.js'
 import TdtImageryProvider from './imagery/tdt/TdtImageryProvider.js'
+import TdtTerrainProvider, {
+  tdtTerrainSubdomains,
+  tdtTerrainUrl,
+} from './terrain/tdt/TdtTerrainProvider.js'
+import createCesiumTerrainProvider, {
+  CESIUM_WORLD_TERRAIN_ASSET_ID,
+} from './terrain/cesium/createCesiumTerrainProvider.js'
 import TencentImageryProvider from './imagery/tencent/TencentImageryProvider.js'
 import BD09TilingScheme from './imagery/tiling-scheme/BD09TilingScheme.js'
 import CustomGeographicTilingScheme from './imagery/tiling-scheme/CustomGeographicTilingScheme.js'
@@ -16,6 +25,10 @@ import CoordTransform from './transform/CoordTransform.js'
 
 const BaseMaps = {
   BaseMap,
+  CesiumTerrain,
+  TdtTerrain,
+  createCesiumTerrainProvider,
+  CESIUM_WORLD_TERRAIN_ASSET_ID,
   createImageryProvider,
   imageryProviderTypes,
   AMapImageryProvider,
@@ -25,6 +38,9 @@ const BaseMaps = {
   baiduImageryStyles,
   TencentImageryProvider,
   TdtImageryProvider,
+  TdtTerrainProvider,
+  tdtTerrainUrl,
+  tdtTerrainSubdomains,
   GoogleImageryProvider,
   googleImageryStyles,
   GeoVisImageryProvider,
@@ -38,6 +54,10 @@ const BaseMaps = {
 
 export {
   BaseMap,
+  CesiumTerrain,
+  TdtTerrain,
+  createCesiumTerrainProvider,
+  CESIUM_WORLD_TERRAIN_ASSET_ID,
   createImageryProvider,
   imageryProviderTypes,
   AMapImageryProvider,
@@ -47,6 +67,9 @@ export {
   baiduImageryStyles,
   TencentImageryProvider,
   TdtImageryProvider,
+  TdtTerrainProvider,
+  tdtTerrainUrl,
+  tdtTerrainSubdomains,
   GoogleImageryProvider,
   googleImageryStyles,
   GeoVisImageryProvider,
