@@ -13,8 +13,8 @@ import geovis from './geovis.js'
 export const baseMapExamples = [
   offline,
   customProvider,
-  amap,
   arcgis,
+  amap,
   cesiumTerrain,
   baidu,
   tencent,

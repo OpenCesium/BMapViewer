@@ -7,6 +7,7 @@ export default {
   code: `const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'tencent',
   style: '1', // img、1（经典地图）
+  crs: 'GCJ-02',
   maximumLevel: 18,
 })
 

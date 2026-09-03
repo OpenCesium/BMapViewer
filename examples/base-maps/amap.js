@@ -6,8 +6,8 @@ export default {
   summary: '加载高德影像地图；支持 img、elec、cva，crs=WGS84 时自动使用 GCJ-02 切片纠偏。',
   code: `const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'amap',
-  style: 'img', // img、elec、cva
-  crs: 'WGS84',
+  style: 'elec', // img、elec、cva
+  crs: 'GCJ-02',
   maximumLevel: 18,
 })
 

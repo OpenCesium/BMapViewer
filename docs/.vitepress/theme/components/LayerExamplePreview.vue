@@ -26,7 +26,7 @@ const demoBase = computed(() => {
   if (configuredBase) return new URL(configuredBase, window.location.origin).href
 
   if (import.meta.env.DEV) {
-    const demoPort = import.meta.env.VITE_DEMO_PORT || '5173'
+    const demoPort = import.meta.env.VITE_DEMO_PORT || '5188'
     return `${window.location.protocol}//${window.location.hostname}:${demoPort}/`
   }
 
