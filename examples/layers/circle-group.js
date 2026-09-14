@@ -2,7 +2,7 @@ export default {
   id: 'circle-group',
   name: 'CircleGroupLayer',
   title: '范围圆',
-  group: '动态效果',
+  group: '线面图层',
   summary: '绘制多个可独立配置的圆形覆盖范围。',
   code: `const layer = new MapLayers.CircleGroupLayer(viewer, {
   fillColor: '#00d9e7',

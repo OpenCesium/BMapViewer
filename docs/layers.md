@@ -11,8 +11,8 @@ import { MapLayers } from 'b-map-viewer'
 | 分类 | 图层 |
 | --- | --- |
 | 点位与标注 | `IconGroupLayer`、`IconClusterLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
-| 线与面 | `LineGroupLayer`、`LinePrimitiveLayer`、`LineMaterialLayer`、`PolygonPrimitiveLayer` |
-| 动态效果 | `CircleGroupLayer`、`CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
+| 线与面 | `LineGroupLayer`、`LinePrimitiveLayer`、`LineMaterialLayer`、`PolygonPrimitiveLayer`、`CircleGroupLayer`、`MaskLayer` |
+| 动态效果 | `CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
 | 三维场景 | `Build3DLayer`、`GradientWallLayer`、`DynamicWaterLayer`、`Heatmap3DLayer`、`RadarScanner3DLayer` |
 | 专题分析 | `HeatmapLayer`、`HeatmapPrimitiveLayer` |
 

@@ -30,7 +30,7 @@
     console.log(viewer.scene, 'viewer')
     baseMap = new BaseMaps.BaseMap(viewer, {
       type: 'offline',
-      coordinateSystem: 'GCJ02',
+      crs: 'GCJ02',
       ...baseMapConfig,
     })
   }
@@ -82,7 +82,7 @@ onMounted( ()=>{
     }) //创建地图容器
     baseMap = new BaseMaps.BaseMap(viewer, {
       type: 'offline',
-      coordinateSystem: 'GCJ02',
+      crs: 'GCJ02',
       ...baseMapConfig,
     })
   })

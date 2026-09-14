@@ -6,7 +6,7 @@
 public/tiles/{z}/{x}/{reverseY}.png
 ```
 
-当前数据采用 TMS 行号，所以模板使用 Cesium 的 `{reverseY}`。瓦片坐标来自 GCJ-02 地图数据，配置 `coordinateSystem: 'GCJ02'` 后，`BaseMaps` 会自动应用 `GCJ02TilingScheme`，使 Cesium 的 WGS84 场景坐标与瓦片对齐。
+当前数据采用 TMS 行号，所以模板使用 Cesium 的 `{reverseY}`。瓦片坐标来自 GCJ-02 地图数据，配置 `crs: 'GCJ02'` 后，`BaseMaps` 会自动应用 `GCJ02TilingScheme`，使 Cesium 的 WGS84 场景坐标与瓦片对齐。
 
 ## 组件案例
 
@@ -18,19 +18,20 @@ import { BaseMaps } from 'b-map-viewer'
 const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'offline',
   url: '/tiles/{z}/{x}/{reverseY}.png',
-  coordinateSystem: 'GCJ02',
+  crs: 'GCJ02',
   minimumLevel: 1,
   maximumLevel: 12,
   themeColor: '#34A4FF',
 })
 ```
 
-如果本地瓦片本身是标准 WGS84/Web Mercator 数据，不要设置 `coordinateSystem: 'GCJ02'`：
+如果本地瓦片本身是标准 WGS84/Web Mercator 数据，可以不设置 `crs`，或者显式配置 `crs: 'WGS84'`：
 
 ```js
 const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'offline',
   url: '/wgs84-tiles/{z}/{x}/{y}.png',
+  crs: 'WGS84',
   minimumLevel: 0,
   maximumLevel: 18,
 })

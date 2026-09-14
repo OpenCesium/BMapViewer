@@ -32,8 +32,16 @@ const MANAGER_KEYS = new Set([
 
 function getProviderOptions(config) {
   const options = { ...config, ...(config.providerOptions || {}) }
+  const legacyCrs = options.coordinateSystem
   MANAGER_KEYS.forEach((key) => delete options[key])
+  if (options.crs === undefined && legacyCrs !== undefined) {
+    options.crs = legacyCrs
+  }
   return options
+}
+
+function normalizeCrs(crs) {
+  return String(crs || '').replace(/[\s_-]/g, '').toUpperCase()
 }
 
 /**
@@ -53,7 +61,7 @@ export function createImageryProvider(config = {}) {
         headers: { Authorization: config.token },
       })
     }
-    if (!options.tilingScheme && config.coordinateSystem === 'GCJ02') {
+    if (!options.tilingScheme && normalizeCrs(options.crs) === 'GCJ02') {
       options.tilingScheme = new GCJ02TilingScheme()
     }
     return new Cesium.UrlTemplateImageryProvider(options)

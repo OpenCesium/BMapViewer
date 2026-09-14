@@ -18,6 +18,7 @@ import Heatmap3DLayer from './Heatmap3DLayer.js'
 import RadarScanner3DLayer from "./RadarScanner3DLayer.js";
 import GradientWallLayer from './GradientWallLayer.js'
 import DynamicWaterLayer from './DynamicWaterLayer.js'
+import MaskLayer from './MaskLayer.js'
 
 export default {
     IconGroupLayer,
@@ -39,5 +40,6 @@ export default {
     Heatmap3DLayer,
     RadarScanner3DLayer,
     GradientWallLayer,
-    DynamicWaterLayer
+    DynamicWaterLayer,
+    MaskLayer
 }

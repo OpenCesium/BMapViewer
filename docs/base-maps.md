@@ -57,7 +57,7 @@ import { BaseMaps } from 'b-map-viewer'
 const baseMap = new BaseMaps.BaseMap(viewer, {
   type: 'offline',
   url: '/tiles/{z}/{x}/{reverseY}.png',
-  coordinateSystem: 'GCJ02',
+  crs: 'GCJ02',
   minimumLevel: 1,
   maximumLevel: 12,
   themeColor: '#34A4FF',
@@ -75,6 +75,7 @@ const baseMap = new BaseMaps.BaseMap(viewer, {
 | `show` | boolean | `true` | 初始可见性 |
 | `themeColor` | string | - | 可选的暗色滤镜目标色 |
 | `layerOptions` | object | `{}` | 传递给 `Cesium.ImageryLayer` 的参数 |
+| `crs` | string | - | 底图坐标系配置；离线 GCJ-02 瓦片可传 `GCJ02`，在线 Provider 的具体含义见对应文档 |
 | `url`、`minimumLevel` 等 | - | - | 未被底图管理器消费的字段会继续传给 Provider |
 
 各 Provider 的 `style` 含义、兼容别名、凭证模式和地址覆盖方式见 [多源 Provider](/base-maps/providers)。
@@ -109,6 +110,13 @@ baseMap.switch({
 ```
 
 ## 从旧版迁移
+
+底图坐标系参数统一使用 `crs`。旧的 `coordinateSystem` 暂时保留为兼容别名，新代码应改为：
+
+```diff
+- coordinateSystem: 'GCJ02'
++ crs: 'GCJ02'
+```
 
 底图不再由 `MapLayers` 导出：
 

@@ -32,9 +32,9 @@ public/tiles/{z}/{x}/{reverseY}.png
 | 分类 | 示例模块 |
 | --- | --- |
 | 点位标注 | `IconGroupLayer`、`IconClusterLayer`、`LabelGroupLayer`、`BubbleLayer`、`BubbleGroupLayer` |
-| 线面图层 | `LineGroupLayer`、`LinePrimitiveLayer`、`PolygonPrimitiveLayer`、`LineMaterialLayer` |
+| 线面图层 | `LineGroupLayer`、`LinePrimitiveLayer`、`PolygonPrimitiveLayer`、`LineMaterialLayer`、`CircleGroupLayer`、`MaskLayer` |
 | 三维场景 | `Build3DLayer`、`GradientWallLayer`、`DynamicWaterLayer`、`Heatmap3DLayer`、`RadarScanner3DLayer` |
-| 动态效果 | `CircleGroupLayer`、`CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
+| 动态效果 | `CircleWaveLayer`、`CircleExplosionLayer`、`PointRippleLayer` |
 | 专题分析 | `HeatmapLayer`、`HeatmapPrimitiveLayer` |
 
 `Build3DLayer` 直接使用 `public/3d-tiles/tileset.json` 及其关联的本地 GLB 数据，不依赖远程 3D Tiles 服务。

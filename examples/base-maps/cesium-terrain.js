@@ -4,7 +4,9 @@ export default {
   title: 'Cesium World Terrain',
   group: '三维地形',
   summary: '加载 Cesium ion 官方全球地形；请替换 Access Token 后运行。',
-  code: `const token = '替换为你的 Cesium ion Token'
+  code: `// 申请token地址https://ion.cesium.com/tokens
+const token = '替换为你的 Cesium ion Token'
+  
 if (token.startsWith('替换')) {
   throw new Error('请先填写 Cesium ion Token')
 }

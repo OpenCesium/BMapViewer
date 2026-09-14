@@ -18,6 +18,7 @@ import heatmap3d from './heatmap-3d.js'
 import radarScanner3d from './radar-scanner-3d.js'
 import gradientWall from './gradient-wall.js'
 import dynamicWater from './dynamic-water.js'
+import mask from './mask.js'
 
 export const layerExamples = [
   iconGroup,
@@ -33,6 +34,7 @@ export const layerExamples = [
   circleExplosion,
   pointRipple,
   polygonPrimitive,
+  mask,
   lineMaterial,
   heatmap,
   heatmapPrimitive,

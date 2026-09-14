@@ -236,7 +236,7 @@ async function handleViewerReady(readyViewer) {
   baseMap = new BaseMaps.BaseMap(viewer, {
     type: 'offline',
     url: tileUrl,
-    coordinateSystem: 'GCJ02',
+    crs: 'GCJ02',
     minimumLevel: 1,
     maximumLevel: 12,
     themeColor: '#34A4FF',
