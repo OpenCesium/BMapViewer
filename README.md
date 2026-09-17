@@ -79,65 +79,6 @@ npm run build:demo
 
 SDK 构建结果位于 `BMapViewer/`，包含 ES Module、UMD 和样式文件。
 
-## 发布到 npm
-
-npm 包名为 [`b-map-viewer`](https://www.npmjs.com/package/b-map-viewer)。发布前需要确认当前登录的是 npm 官方 Registry，而不是 `npmmirror` 等下载镜像：
-
-```powershell
-npm login --registry=https://registry.npmjs.org/ --auth-type=web
-npm whoami --registry=https://registry.npmjs.org/
-```
-
-`npm whoami` 应返回拥有 `b-map-viewer` 发布权限的账号。项目已经通过 `publishConfig` 将发布目标固定为 npm 官方仓库。
-
-### 通过 GitHub Actions 发布（推荐）
-
-先提交当前开发改动，保证 Git 工作区干净，然后根据语义化版本规则升级版本：
-
-```powershell
-git status
-
-# 修复版本：0.1.2 → 0.1.3
-npm version patch
-
-# 新功能版本可改用 npm version minor
-# 不兼容更新可改用 npm version major
-
-git push origin main --follow-tags
-```
-
-`npm version` 会更新 `package.json` 和 `package-lock.json`，并创建版本提交及 `v*` 标签。标签推送后，[npm 发布工作流](.github/workflows/publish-npm.yml) 会自动安装依赖、构建 SDK、检查压缩包并发布。使用此方式时不要再在本地执行 `npm publish`，否则两个发布任务会争用同一个版本号。
-
-### 在本机手动发布
-
-需要手动发布时，使用 `--no-git-tag-version` 只更新版本文件，避免触发标签发布工作流：
-
-```powershell
-# patch、minor、major 三选一
-npm version patch --no-git-tag-version
-
-npm run build:lib
-npm run pack:check
-npm publish --registry=https://registry.npmjs.org/ --access public
-```
-
-账号开启 2FA 且命令未自动提示验证码时，可以显式传入一次性验证码：
-
-```powershell
-npm publish --registry=https://registry.npmjs.org/ --access public --otp=你的6位验证码
-```
-
-发布成功后验证版本，并将版本文件和构建产物提交到个人主仓库：
-
-```powershell
-npm view b-map-viewer version --registry=https://registry.npmjs.org/
-
-git add .
-git commit -m "release: v0.1.3"
-git push origin main
-```
-
-手动发布后不要再推送同版本的 `v*` 标签，否则 GitHub Actions 会尝试重复发布该版本。npm 不允许覆盖已经发布的版本号；如果发布失败且官网仍没有该版本，修复登录或权限问题后可直接重试原版本，无需再次升级。
 
 ## 在 Vue 3 项目中使用
 
