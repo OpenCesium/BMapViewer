@@ -18,7 +18,13 @@ useCesium 是一个用于 初始化和管理 Cesium Viewer 的 Hook 工具函数
 import {useCesium} from "b-map-viewer";
 import 'b-map-viewer/style.css'
 
-const {initCesium, setMapCenter, setViewer} = useCesium()
+const {
+  initCesium,
+  setMapCenter,
+  setViewer,
+  setCameraHeightRange,
+  getCameraHeightRange,
+} = useCesium()
 
 ```
 
@@ -35,6 +41,8 @@ import {useCesium} from "b-map-viewer";
 const {
     initCesium,
     setViewer,
+    setCameraHeightRange,
+    getCameraHeightRange,
     // ...
 } = useCesium()
 ```
@@ -185,11 +193,38 @@ flyTo({
 }, 2.5)
 ```
 
-## restrictMaxiHeight - 限制相机高度
+## setCameraHeightRange - 动态修改相机高度范围
+
+- `setCameraHeightRange(config)`
+- 初始化完成后可随时调用，只传 `minHeight` 或 `maxHeight` 时会保留另一项当前值。
+- 修改后会立即执行一次高度约束；如果当前相机超出新范围，会直接调整到对应边界。
+- 返回当前完整范围 `{ minHeight, maxHeight }`。
+
+```js
+// 同时更新上下限
+setCameraHeightRange({
+  minHeight: 100,
+  maxHeight: 80000,
+})
+
+// 只修改最大高度
+setCameraHeightRange({ maxHeight: 120000 })
+```
+
+当 `minHeight` 大于 `maxHeight` 时会抛出 `RangeError`；传入非有限数值时会抛出 `TypeError`。
+
+## getCameraHeightRange - 获取当前高度范围
+
+```js
+const range = getCameraHeightRange()
+// { minHeight: 100, maxHeight: 120000 }
+```
+
+## restrictMaxiHeight - 立即执行相机高度约束
 
 - restrictMaxiHeight()
 - 无参
-- 描述：限制相机的视点高度，防止场景被无限缩放或拉近。预设了极值阈值，向下最小高度限制为 `minHeight:1`，向上最大高度限制为`maxHeight:1500000`。
+- 描述：根据当前高度范围立即约束相机，通常由渲染循环自动调用；手动修改相机位置后也可以主动调用。
 
 ##  getOffsetLat - 获取纬度偏移
 

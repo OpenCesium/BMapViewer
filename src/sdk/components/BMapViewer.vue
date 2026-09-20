@@ -34,11 +34,17 @@ const emit = defineEmits(['ready', 'error', 'click'])
 const cesiumContainer = ref(null)
 let handler = null
 let viewer = null
+let initPromise = null
+let hasEmittedReady = false
+let isUnmounted = false
 const {
   initCesium,
   destroyCesium,
   flyTo,
   getViewer,
+  getCameraHeightRange,
+  setCameraHeightRange,
+  restrictMaxiHeight,
 } = useCesium()
 
 // 初始化 Cesium
@@ -46,12 +52,32 @@ onMounted(async () => {
   await initMap(props.camera)
 })
 
-const initMap = async (mapConfig) =>{
-  try {
+const initMap = async (mapConfig, options = {}) =>{
+  if (initPromise) return initPromise
+
+  const force = options?.force === true
+  const currentViewer = viewer && !viewer.isDestroyed() ? viewer : null
+  if (currentViewer && !force) return currentViewer
+
+  const initialization = (async () => {
     await nextTick() // 确保 DOM 已渲染
+    if (isUnmounted || !cesiumContainer.value) return null
+
     destroyHandler()
     destroyCesium()
-    viewer = await initCesium(cesiumContainer.value, {...props,mapConfig})
+    viewer = null
+
+    const nextViewer = await initCesium(cesiumContainer.value, {
+      ...props,
+      mapConfig: mapConfig ?? props.camera,
+    })
+
+    if (isUnmounted) {
+      destroyCesium()
+      return null
+    }
+
+    viewer = nextViewer
     handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
 
     // 关闭太阳月亮天空盒
@@ -67,11 +93,28 @@ const initMap = async (mapConfig) =>{
       viewer.resolutionScale = window.devicePixelRatio;
     }
     startClick()
-    emit('ready', viewer)
+
+    // ready 代表当前组件实例首次可用；重复调用 initMap 只复用同一个 Viewer。
+    if (!hasEmittedReady) {
+      hasEmittedReady = true
+      emit('ready', viewer)
+    }
+    return viewer
+  })()
+
+  initPromise = initialization
+  try {
+    return await initialization
   } catch (err) {
-    emit('error', err)
+    if (!isUnmounted) emit('error', err)
+    return null
+  } finally {
+    if (initPromise === initialization) initPromise = null
   }
 }
+
+// 显式重建 Viewer；返回新实例，但 ready 在单次组件生命周期内仍只触发一次。
+const reinitializeMap = (mapConfig = props.camera) => initMap(mapConfig, { force: true })
 
 //开启点击监听
 const startClick = () =>{
@@ -109,16 +152,22 @@ const destroyHandler = () => {
 
 // 清理资源
 onUnmounted(() => {
+  isUnmounted = true
   destroyHandler()
   destroyCesium()
   viewer = null
+  initPromise = null
 })
 
 // 暴露方法给父组件
 defineExpose({
   initMap,
+  reinitializeMap,
   flyTo,
   getViewer,
+  getCameraHeightRange,
+  setCameraHeightRange,
+  restrictMaxiHeight,
   startClick,
   stopClick,
 })

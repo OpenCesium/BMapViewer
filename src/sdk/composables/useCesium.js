@@ -2,9 +2,38 @@ import {getOffsetLat} from '../utils/utils.js'
 import * as Cesium from 'cesium'
 import { printBMapViewerWelcome } from '../utils/welcome.js'
 export function useCesium() {
+    const DEFAULT_MINIMUM_HEIGHT = 1
+    const DEFAULT_MAXIMUM_HEIGHT = 1500000
     let viewer = null
-    let minimumHeight = 1;
-    let maximumHeight = 1500000
+    let minimumHeight = DEFAULT_MINIMUM_HEIGHT
+    let maximumHeight = DEFAULT_MAXIMUM_HEIGHT
+
+    const getCameraHeightRange = () => ({
+        minHeight: minimumHeight,
+        maxHeight: maximumHeight,
+    })
+
+    const updateCameraHeightRange = (config = {}) => {
+        const parseHeight = (value, fallback, field) => {
+            if (value == null) return fallback
+            const height = Number(value)
+            if (!Number.isFinite(height)) {
+                throw new TypeError(`${field} 必须是有限数值`)
+            }
+            return height
+        }
+
+        const nextMinimumHeight = parseHeight(config.minHeight, minimumHeight, 'minHeight')
+        const nextMaximumHeight = parseHeight(config.maxHeight, maximumHeight, 'maxHeight')
+        if (nextMinimumHeight > nextMaximumHeight) {
+            throw new RangeError('minHeight 不能大于 maxHeight')
+        }
+
+        minimumHeight = nextMinimumHeight
+        maximumHeight = nextMaximumHeight
+        return getCameraHeightRange()
+    }
+
     //初始化Cesium
     const initCesium = async (container, props) => {
         printBMapViewerWelcome()
@@ -46,10 +75,11 @@ export function useCesium() {
                 showRenderLoopErrors:false
             })
 
-            if(props.mapConfig){
-                console.log('mapConfig',props)
-                minimumHeight = props.mapConfig?.minHeight || 1
-                maximumHeight = props.mapConfig?.maxHeight || 1500000
+            updateCameraHeightRange({
+                minHeight: props?.mapConfig?.minHeight ?? DEFAULT_MINIMUM_HEIGHT,
+                maxHeight: props?.mapConfig?.maxHeight ?? DEFAULT_MAXIMUM_HEIGHT,
+            })
+            if(props?.mapConfig){
                 setMapCenter(props.mapConfig)
             }
             // 在渲染阶段前添加事件监听器
@@ -87,6 +117,7 @@ export function useCesium() {
             return viewer
 
         } catch (err) {
+            destroyCesium()
             console.error('Failed to initialize Cesium:', err)
             throw err
         }
@@ -147,6 +178,7 @@ export function useCesium() {
     }
     // 相机高度限制
     const restrictMaxiHeight = () =>{
+        if (!viewer || viewer.isDestroyed()) return
         let eye = viewer.camera.positionCartographic;
         // 判断相机坐标是否小于阈值，若小于阈值，则保持视点方位，修改相机高度
         if (eye.height < minimumHeight) {
@@ -158,7 +190,7 @@ export function useCesium() {
                 }
             });
         }
-        if(eye.height >= maximumHeight){
+        if(eye.height > maximumHeight){
             viewer.camera.setView({
                 destination: Cesium.Cartesian3.fromRadians(eye.longitude, eye.latitude, maximumHeight),
                 orientation: {
@@ -168,10 +200,19 @@ export function useCesium() {
             });
         }
     }
+    // 动态修改相机高度范围，并立即约束当前相机高度
+    const setCameraHeightRange = (config = {}) => {
+        const range = updateCameraHeightRange(config)
+        restrictMaxiHeight()
+        return range
+    }
     return {
         getViewer,
         setViewer,
         setMapCenter,
+        getCameraHeightRange,
+        setCameraHeightRange,
+        restrictMaxiHeight,
         initCesium,
         destroyCesium,
         flyTo,

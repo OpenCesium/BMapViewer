@@ -24,7 +24,7 @@
 
 | 名称 | 参数 | 说明 |
 | --- | --- | --- |
-| `ready` | `Cesium.Viewer` | Viewer 初始化完成 |
+| `ready` | `Cesium.Viewer` | 当前组件实例首次初始化完成；每次挂载只触发一次 |
 | `error` | `Error` | 初始化失败 |
 | `click` | `{ lon, lat, feature? }` | 点击到地球表面时触发 |
 
@@ -34,17 +34,26 @@
 
 | 方法 | 说明 |
 | --- | --- |
-| `initMap(camera?)` | 手动重新初始化 Viewer |
+| `initMap(camera?)` | 幂等初始化 Viewer；初始化中复用同一 Promise，完成后重复调用返回现有实例 |
+| `reinitializeMap(camera?)` | 显式销毁并重建 Viewer；返回新实例，但不会重复触发 `ready` |
 | `flyTo(destination, duration?)` | 飞行到经纬度位置 |
 | `startClick()` | 开启左键拾取 |
 | `stopClick()` | 关闭左键拾取 |
 | `getViewer()` | 获取当前 `Cesium.Viewer` |
+| `setCameraHeightRange({ minHeight?, maxHeight? })` | 动态修改高度范围并立即应用到当前相机 |
+| `getCameraHeightRange()` | 获取当前 `{ minHeight, maxHeight }` |
+| `restrictMaxiHeight()` | 立即按当前范围约束一次相机高度 |
 
 ```js
 mapRef.value.flyTo(
   { longitude: 125.83372000975274, latitude: 44.14712267403385, height: 8000, pitch: -45 },
   1.5,
 )
+
+mapRef.value.setCameraHeightRange({
+  minHeight: 100,
+  maxHeight: 120000,
+})
 ```
 
 ## SDK 模块导出

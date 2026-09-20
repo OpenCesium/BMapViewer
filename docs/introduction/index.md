@@ -22,7 +22,7 @@ BMapViewer 为 Cesium 提供 Vue 3 组件入口，并为常见 GIS 能力提供�
 | `BaseMaps` | 离线瓦片、多源影像、Cesium ion 与天地图地形 Provider、坐标纠偏和自定义切片方案 |
 | `MapLayers` | 点线面、标注、气泡、热力图、3D Tiles 和动态效果 |
 | `WeatherEffects` | 六类屏幕空间天气效果及创建、切换、显隐与销毁管理 |
-| `PickTools` | 点、图标点、线和多边形拾取，支持拖拽编辑 |
+| `PickTools` | 点、图标点、线、多边形及规则图形绘制，支持拖拽编辑 |
 | Turf | GeoJSON 数据处理、距离计算、缓冲和空间关系分析 |
 | 示例工作台 | 浏览、修改并重新运行每个能力的示例代码 |
 

@@ -39,7 +39,7 @@ BMapViewer组件是基于vue3封装的Cesium加载组件,可以通过简单的�
 
 |  事件名  |    说明     |    类型    |  callback参数   |
 |:-----:|:---------:|:--------:|:-------------:|
-| ready | 地图加载完成时触发 | Function | `viewer` (Cesium.Viewer) |
+| ready | 当前组件实例首次加载完成时触发，每次挂载只触发一次 | Function | `viewer` (Cesium.Viewer) |
 | error | 地图加载失败时触发 | Function | `err` (Error) |
 | click  | 鼠标左键点击事件 | Function | `{ lon, lat, feature }` |
 
@@ -47,11 +47,15 @@ BMapViewer组件是基于vue3封装的Cesium加载组件,可以通过简单的�
 
 |  名称  |      说明      |   类型   |  参数类型  |
 |:-----:|:------------:|:--------:|:------:|
-| initMap |    地图初始化     | Function | `mapConfig` (Object) |
+| initMap | 幂等初始化；重复调用返回当前 Viewer | Function | `mapConfig` (Object) |
+| reinitializeMap | 显式销毁并重建 Viewer，不会重复触发 ready | Function | `mapConfig` (Object) |
 | startClick | 开启点击事件(默认开启) | Function | - |
 | stopClick |    关闭点击事件    | Function | - |
 | flyTo |    相机飞行到指定位置    | Function | `destination, duration?` |
 | getViewer |    获取当前 Cesium Viewer    | Function | - |
+| setCameraHeightRange | 动态修改并立即应用相机高度范围 | Function | `{ minHeight?, maxHeight? }` |
+| getCameraHeightRange | 获取当前相机高度范围 | Function | - |
+| restrictMaxiHeight | 立即按当前范围约束相机高度 | Function | - |
 
 #### Slots-插槽
 
